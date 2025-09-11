@@ -1,0 +1,11 @@
+[
+	{
+		"dt": "Employee Checkin",
+		"fieldname": "custom_checkin_original_id",
+		"fieldtype": "Data",
+		"label": "Original Checkin ID",
+		"no_copy": 1,
+		"read_only": 1,
+		"hidden": 1
+	}
+]

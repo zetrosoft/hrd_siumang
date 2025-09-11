@@ -1,0 +1,10 @@
+{
+ "doctype": "Property Setter",
+ "doctype_or_field": "DocField",
+ "field_name": "no_of_positions",
+ "name": "Job Requisition-no_of_positions-description",
+ "property": "description",
+ "value": "Jumlah yang dibutuhkan untuk posisi ini",
+ "dt": "Job Requisition",
+ "description": "Jumalh yang dibutuhkan untuk posisi ini"
+}
