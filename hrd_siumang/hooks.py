@@ -5,7 +5,7 @@ app_description = "HRD Siumang Custom Apps"
 app_email = "support@bijaktechnology.com"
 app_license = "mit"
 
-fixtures = [{"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]}]
+fixtures = [{"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]}, "Workflow"]
 
 # Apps
 # ------------------
