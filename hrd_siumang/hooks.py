@@ -5,7 +5,13 @@ app_description = "HRD Siumang Custom Apps"
 app_email = "support@bijaktechnology.com"
 app_license = "mit"
 
-fixtures = [{"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]}, "Workflow"]
+fixtures = [
+    {"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]},
+    #{"doctype": "Workflow Action Master", "filters": [["name", "in", ["Submit", "Approve", "Reject"]]]},
+    #{"doctype": "Workflow State", "filters": [["parent", "=", "Job Requisition Workflow"]]},
+    #{"doctype": "Workflow Transition", "filters": [["parent", "=", "Job Requisition Workflow"]]},
+    #"Workflow"
+]
 
 # Apps
 # ------------------

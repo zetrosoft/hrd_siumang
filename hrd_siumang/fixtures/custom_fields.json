@@ -96,5 +96,78 @@
     "insert_after": "no_of_positions",
     "module": "hrd_siumang",
     "name": "Job Requisition-section_break_kualifikasi_kandidat"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "workflow_state",
+    "fieldtype": "Data",
+    "label": "Workflow State",
+    "hidden": 0,
+    "read_only": 0,
+    "reqd": 0,
+    "in_list_view": 0,
+    "in_standard_filter": 0,
+    "bold": 0,
+    "allow_on_submit": 0,
+    "translatable": 0,
+    "width": "",
+    "options": "",
+    "default": "",
+    "description": "Current state of the Job Requisition workflow",
+    "permlevel": 0,
+    "precision": "",
+    "depends_on": "",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-workflow_state"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "status_karyawan",
+    "fieldtype": "Select",
+    "label": "Status Karyawan",
+    "options": "Tetap\nKontrak\nHarian Lepas\nBorongan",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-status_karyawan"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "status_pernikahan",
+    "fieldtype": "Select",
+    "label": "Status Pernikahan",
+    "options": "Lajang\nKawin\nTidak Dipersyaratkan",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-status_pernikahan"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "keahlian_section",
+    "fieldtype": "Section Break",
+    "label": "Keahlian",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-keahlian_section"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "bahasa_asing",
+    "fieldtype": "Data",
+    "label": "Bahasa Asing",
+    "insert_after": "keahlian_section",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-bahasa_asing"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "lain_lain",
+    "fieldtype": "Data",
+    "label": "Lain - Lain",
+    "insert_after": "bahasa_asing",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-lain_lain"
   }
 ]
