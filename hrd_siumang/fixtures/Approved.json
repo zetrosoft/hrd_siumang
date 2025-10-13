@@ -1,0 +1,6 @@
+{
+ "doctype": "Workflow State",
+ "name": "Approved",
+ "state": "Approved",
+ "workflow_state_name": "Approved"
+}

@@ -1,0 +1,6 @@
+{
+ "doctype": "Workflow State",
+ "name": "Pending Manager Approval",
+ "state": "Pending Manager Approval",
+ "workflow_state_name": "Pending Manager Approval"
+}

@@ -1,0 +1,6 @@
+{
+ "doctype": "Workflow State",
+ "name": "Rejected",
+ "state": "Rejected",
+ "workflow_state_name": "Rejected"
+}

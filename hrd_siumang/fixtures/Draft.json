@@ -1,0 +1,6 @@
+{
+ "doctype": "Workflow State",
+ "name": "Draft",
+ "state": "Draft",
+ "workflow_state_name": "Draft"
+}

@@ -6,11 +6,11 @@ app_email = "support@bijaktechnology.com"
 app_license = "mit"
 
 fixtures = [
-    {"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]},
-    #{"doctype": "Workflow Action Master", "filters": [["name", "in", ["Submit", "Approve", "Reject"]]]},
-    #{"doctype": "Workflow State", "filters": [["parent", "=", "Job Requisition Workflow"]]},
-    #{"doctype": "Workflow Transition", "filters": [["parent", "=", "Job Requisition Workflow"]]},
-    #"Workflow"
+	{"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]},
+	# {"doctype": "Workflow Action Master", "filters": [["name", "in", ["Submit", "Approve", "Reject"]]]},
+	# {"doctype": "Workflow State", "filters": [["parent", "=", "Job Requisition Workflow"]]},
+	# {"doctype": "Workflow Transition", "filters": [["parent", "=", "Job Requisition Workflow"]]},
+	# "Workflow"
 ]
 
 # Apps
@@ -147,13 +147,9 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Job Requisition": {"before_save": "hrd_siumang.overrides.job_requisition_override.before_save"}
+}
 
 # Scheduled Tasks
 # ---------------
@@ -251,3 +247,4 @@ doctype_js = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+#

@@ -1,0 +1,87 @@
+{
+ "doctype": "Workflow",
+ "docstatus": 0,
+ "name": "Job Requisition Approval",
+ "workflow_name": "Job Requisition Approval",
+ "document_type": "Job Requisition",
+ "is_active": 1,
+ "send_email_alert": 1,
+ "workflow_state_field": "workflow_state",
+ "states": [
+  {
+   "state": "Draft",
+   "doc_status": "0",
+   "allow_edit": "Employee"
+  },
+  {
+   "state": "Pending Manager Approval",
+   "doc_status": "1",
+   "allow_edit": "Manager"
+  },
+  {
+   "state": "Pending Director Approval",
+   "doc_status": "1",
+   "allow_edit": "Director"
+  },
+  {
+   "state": "Approved",
+   "doc_status": "1",
+   "allow_edit": "System Manager",
+   "update_field": "status",
+   "update_value": "Open & Approved"
+  },
+  {
+   "state": "Rejected",
+   "doc_status": "1",
+   "allow_edit": "System Manager",
+   "update_field": "status",
+   "update_value": "Rejected"
+  }
+ ],
+ "transitions": [
+  {
+   "state": "Draft",
+   "action": "Submit for Approval",
+   "next_state": "Pending Manager Approval",
+   "allowed": "Employee",
+   "allow_self_approval": 0
+  },
+  {
+   "state": "Pending Manager Approval",
+   "action": "Approve",
+   "next_state": "Approved",
+   "allowed": "Manager",
+   "condition": "doc.jenis_permintaan != 'Tambahan'",
+   "allow_self_approval": 0
+  },
+  {
+   "state": "Pending Manager Approval",
+   "action": "Approve",
+   "next_state": "Pending Director Approval",
+   "allowed": "Manager",
+   "condition": "doc.jenis_permintaan == 'Tambahan'",
+   "allow_self_approval": 0
+  },
+  {
+   "state": "Pending Director Approval",
+   "action": "Approve",
+   "next_state": "Approved",
+   "allowed": "Director",
+   "allow_self_approval": 0
+  },
+  {
+   "state": "Pending Manager Approval",
+   "action": "Reject",
+   "next_state": "Rejected",
+   "allowed": "Manager",
+   "allow_self_approval": 0
+  },
+  {
+   "state": "Pending Director Approval",
+   "action": "Reject",
+   "next_state": "Rejected",
+   "allowed": "Director",
+   "allow_self_approval": 0
+  }
+ ]
+}
