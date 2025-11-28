@@ -287,7 +287,7 @@ def execute():
 	print_format_data = {
 		"name": "Slip Gaji Siumang",
 		"doc_type": "Salary Slip",
-		"module": "Hrd Siumang",  # Corrected capitalization based on app_title
+		"module": "hrd_siumangg",  # Corrected capitalization based on app_title
 		"standard": "Yes",
 		"print_format_type": "Jinja",
 		"html": html_content,
