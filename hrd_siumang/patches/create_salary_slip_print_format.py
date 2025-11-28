@@ -108,14 +108,14 @@ def execute():
             text-overflow: ellipsis; /* Adds ellipsis for overflow */
         }
         .item-detail-table td.component-label {
-            width: 70%; /* Adjusted width */
+            width: 53%; /* Adjusted width */
         }
         .item-detail-table td.currency-prefix {
-            width: 10%;
-            text-align: right;
+            width: 2%;
+            text-align: left;
         }
         .item-detail-table td.amount-value {
-            width: 20%;
+            width: 45%;
             text-align: right;
         }
         .total-row {
@@ -172,7 +172,7 @@ def execute():
                     {% endif %}
                 </td>
                 <td style="width: 70%;" class="title-section">
-                    <h1>SLIP GAJI {{ frappe.format(doc.start_date, "MMMM YYYY").upper() }}</h1>
+                    <h1>SLIP GAJI {{ frappe.format(doc.start_date, "MMMM YYYY") | default('') | upper }}</h1>
                     <p style="font-size: 12px; margin-top: 5px; text-align: center;">{{ company_doc.company_name }}</p>
                 </td>
                 <td style="width: 15%; text-align: right;">
@@ -271,7 +271,7 @@ def execute():
         </table>
 
         <div class="footer-section">
-            <p>Dicetak : {{ frappe.format(frappe.utils.nowdate(), "DD-MM-YYYY") }} {{ frappe.format(frappe.utils.nowtime(), "HH:mm") }}</p>
+            <p>Dicetak : {{ frappe.utils.now_datetime().strftime("%d-%m-%Y %H:%M") }}</p>
         </div>
 
         <div class="disclaimer-section">
