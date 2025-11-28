@@ -5,3 +5,6 @@
 tags
 node_modules
 __pycache__
+ter_table.py
+fix_child_tables.py
+verify_doctype_json.py

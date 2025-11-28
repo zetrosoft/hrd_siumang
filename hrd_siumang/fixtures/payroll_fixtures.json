@@ -1,0 +1,43 @@
+[
+    {
+        "doctype": "Konfigurasi PPh 21",
+        "name": "Konfigurasi PPh 21",
+        "__single_doctype": 1,
+        "biaya_jabatan_percent": 5,
+        "biaya_jabatan_max_annual": 6000000,
+        "ptkp_table": [
+            {"doctype": "PTKP Item", "kode_ptkp": "TK/0", "deskripsi": "Tidak Kawin, 0 Tanggungan", "nilai_ptkp_tahunan": 54000000},
+            {"doctype": "PTKP Item", "kode_ptkp": "TK/1", "deskripsi": "Tidak Kawin, 1 Tanggungan", "nilai_ptkp_tahunan": 58500000},
+            {"doctype": "PTKP Item", "kode_ptkp": "K/0", "deskripsi": "Kawin, 0 Tanggungan", "nilai_ptkp_tahunan": 58500000},
+            {"doctype": "PTKP Item", "kode_ptkp": "K/1", "deskripsi": "Kawin, 1 Tanggungan", "nilai_ptkp_tahunan": 63000000},
+            {"doctype": "PTKP Item", "kode_ptkp": "K/2", "deskripsi": "Kawin, 2 Tanggungan", "nilai_ptkp_tahunan": 67500000},
+            {"doctype": "PTKP Item", "kode_ptkp": "K/3", "deskripsi": "Kawin, 3 Tanggungan", "nilai_ptkp_tahunan": 72000000}
+        ],
+        "tarif_progresif_table": [
+            {"doctype": "Tarif Progresif Item", "batas_bawah_pkp": 0, "batas_atas_pkp": 60000000, "tarif": 5},
+            {"doctype": "Tarif Progresif Item", "batas_bawah_pkp": 60000001, "batas_atas_pkp": 250000000, "tarif": 15},
+            {"doctype": "Tarif Progresif Item", "batas_bawah_pkp": 250000001, "batas_atas_pkp": 500000000, "tarif": 25},
+            {"doctype": "Tarif Progresif Item", "batas_bawah_pkp": 500000001, "batas_atas_pkp": 5000000000, "tarif": 30},
+            {"doctype": "Tarif Progresif Item", "batas_bawah_pkp": 5000000001, "batas_atas_pkp": 0, "tarif": 35}
+        ]
+    },
+    {
+        "doctype": "Overtime Calculation",
+        "name": "Lembur Hari Kerja",
+        "nama_skema": "Lembur Hari Kerja",
+        "overtime_rates": [
+            {"doctype": "Overtime Rate", "jam_ke_mulai": 1, "jam_ke_selesai": 1, "pengali_upah": 1.5},
+            {"doctype": "Overtime Rate", "jam_ke_mulai": 2, "jam_ke_selesai": 0, "pengali_upah": 2.0}
+        ]
+    },
+    {
+        "doctype": "Overtime Calculation",
+        "name": "Lembur Libur Resmi",
+        "nama_skema": "Lembur Libur Resmi",
+        "overtime_rates": [
+            {"doctype": "Overtime Rate", "jam_ke_mulai": 1, "jam_ke_selesai": 8, "pengali_upah": 2.0},
+            {"doctype": "Overtime Rate", "jam_ke_mulai": 9, "jam_ke_selesai": 9, "pengali_upah": 3.0},
+            {"doctype": "Overtime Rate", "jam_ke_mulai": 10, "jam_ke_selesai": 0, "pengali_upah": 4.0}
+        ]
+    }
+]

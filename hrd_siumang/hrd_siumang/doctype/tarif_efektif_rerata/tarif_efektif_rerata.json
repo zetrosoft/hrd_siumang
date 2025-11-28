@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-28 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "kode_ptkp",
+  "kategori_ter",
+  "batas_penghasilan_bruto_bulanan_bawah",
+  "batas_penghasilan_bruto_bulanan_atas",
+  "tarif_ter"
+ ],
+ "fields": [
+  {
+   "fieldname": "kode_ptkp",
+   "fieldtype": "Data",
+   "label": "Kode PTKP",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "kategori_ter",
+   "fieldtype": "Select",
+   "label": "Kategori TER",
+   "options": "A\\nB\\nC",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "batas_penghasilan_bruto_bulanan_bawah",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Batas Bawah Penghasilan Bruto Bulanan"
+  },
+  {
+   "fieldname": "batas_penghasilan_bruto_bulanan_atas",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Batas Atas Penghasilan Bruto Bulanan"
+  },
+  {
+   "fieldname": "tarif_ter",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tarif TER (%)"
+  }
+ ],
+ "modified": "2025-11-28 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Hrd Siumang",
+ "name": "Tarif Efektif Rerata",
+ "naming_series": "T.E.R.####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

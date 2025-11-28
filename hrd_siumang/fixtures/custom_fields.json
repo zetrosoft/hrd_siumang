@@ -5,9 +5,10 @@
     "fieldname": "pendidikan",
     "fieldtype": "Select",
     "label": "Pendidikan",
-    "options": "SMA\nD3\nS1\nS2\nLainnya",
+    "options": "\nSMA\nD3\nS1\nS2\nLainnya",
     "insert_after": "designation",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-pendidikan",
     "description": "Pendidikan minimum yang dibutuhkan untuk posisi ini"
   },
@@ -20,38 +21,8 @@
     "options": "Pria\nWanita\nTidak Dispesifikasikan",
     "insert_after": "pendidikan",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-jenis_kelamin"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Job Requisition",
-    "fieldname": "usia_min",
-    "fieldtype": "Int",
-    "label": "Usia Min",
-    "insert_after": "jenis_kelamin",
-    "module": "hrd_siumang",
-    "name": "Job Requisition-usia_min"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Job Requisition",
-    "fieldname": "usia_maks",
-    "fieldtype": "Int",
-    "label": "Usia Maks",
-    "insert_after": "usia_min",
-    "module": "hrd_siumang",
-    "name": "Job Requisition-usia_maks"
-  },
-  {
-    "doctype": "Custom Field",
-    "dt": "Job Requisition",
-    "fieldname": "tahun_pengalaman",
-    "fieldtype": "Int",
-    "label": "Pengalaman",
-    "insert_after": "usia_maks",
-    "module": "hrd_siumang",
-    "name": "Job Requisition-tahun_pengalaman",
-    "description": "Tahun pengalaman kerja yang dibutuhkan untuk posisi ini"
   },
   {
     "doctype": "Custom Field",
@@ -62,6 +33,7 @@
     "options": "Staff\nSupervisor\nManager\nSenior Manager\nDirektur",
     "insert_after": "tahun_pengalaman",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-level_posisi"
   },
   {
@@ -117,6 +89,7 @@
     "label": "Status Karyawan",
     "options": "Tetap\nKontrak\nHarian Lepas\nBorongan",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-status_karyawan"
   },
   {
@@ -127,6 +100,7 @@
     "label": "Status Pernikahan",
     "options": "Lajang\nKawin\nTidak Dipersyaratkan",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-status_pernikahan"
   },
   {
@@ -136,6 +110,7 @@
     "fieldtype": "Section Break",
     "label": "Keahlian",
     "module": "hrd_siumang",
+    "reqd":1,
     "name": "Job Requisition-keahlian_section"
   },
   {
@@ -168,69 +143,63 @@
     "module": "hrd_siumang",
     "name": "Job Requisition-section_kualifikasi"
   },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "usia_min",
-        "label": "Usia Minimum",
-        "fieldtype": "Int",
-        "insert_after": "jenis_kelamin",
-        "description": "Usia minimum yang diharapkan untuk kandidat.",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-usia_min"
-    },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "usia_maks",
-        "label": "Usia Maksimum",
-        "fieldtype": "Int",
-        "insert_after": "usia_min",
-        "description": "Usia maksimum yang diharapkan untuk kandidat.",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-usia_maks"
-    },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "tahun_pengalaman",
-        "label": "Tahun Pengalaman",
-        "fieldtype": "Int",
-        "insert_after": "usia_maks",
-        "description": "Jumlah tahun pengalaman kerja yang dimiliki kandidat.",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-tahun_pengalaman"
-    },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "jenis_permintaan",
-        "label": "Jenis Permintaan",
-        "fieldtype": "Select",
-        "options": "Replacement\nTambahan",
-        "reqd": 1,
-        "insert_after": "level_posisi",
-        "description": "Pilih apakah ini permintaan untuk penggantian karyawan atau penambahan posisi baru.",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-jenis_permintaan"
-    },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "column_break_18",
-        "fieldtype": "Column Break",
-        "insert_after": "jenis_permintaan",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-column_break_1"
-    },
-    {
-        "doctype": "Custom Field",
-        "dt": "Job Requisition",
-        "fieldname": "section_informasi_jabatan",
-        "label": "Informasi Jabatan",
-        "fieldtype": "Section Break",
-        "insert_after": "timelines_tab",
-        "module": "hrd_siumang",
-        "name": "Job Requisition-section_informasi_jabatan"
-    }
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "usia_min",
+    "label": "Usia Minimum",
+    "fieldtype": "Int",
+    "insert_after": "jenis_kelamin",
+    "reqd":1,
+    "description": "Usia minimum yang diharapkan untuk kandidat.",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-usia_min"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "usia_maks",
+    "label": "Usia Maksimum",
+    "fieldtype": "Int",
+    "reqd":1,
+    "insert_after": "usia_min",
+    "description": "Usia maksimum yang diharapkan untuk kandidat.",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-usia_maks"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "tahun_pengalaman",
+    "label": "Tahun Pengalaman",
+    "fieldtype": "Int",
+    "reqd":1,
+    "insert_after": "usia_maks",
+    "description": "Jumlah tahun pengalaman kerja yang dimiliki kandidat.",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-tahun_pengalaman"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "jenis_permintaan",
+    "label": "Jenis Permintaan",
+    "fieldtype": "Select",
+    "options": "Replacement\nTambahan",
+    "reqd": 1,
+    "insert_after": "level_posisi",
+    "description": "Pilih apakah ini permintaan untuk penggantian karyawan atau penambahan posisi baru.",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-jenis_permintaan"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Job Requisition",
+    "fieldname": "section_informasi_jabatan",
+    "label": "Informasi Jabatan",
+    "fieldtype": "Section Break",
+    "insert_after": "timelines_tab",
+    "module": "hrd_siumang",
+    "name": "Job Requisition-section_informasi_jabatan"
+  }
 ]

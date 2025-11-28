@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-26 09:25:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "biaya_jabatan_percent",
+  "biaya_jabatan_max_annual",
+  "ptkp_table",
+  "tarif_progresif_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "biaya_jabatan_percent",
+   "fieldtype": "Percent",
+   "label": "Biaya Jabatan (%)",
+   "default": "5"
+  },
+  {
+   "fieldname": "biaya_jabatan_max_annual",
+   "fieldtype": "Currency",
+   "label": "Biaya Jabatan Maksimum (Tahunan)",
+   "default": "6000000"
+  },
+  {
+   "fieldname": "ptkp_table",
+   "fieldtype": "Table",
+   "label": "Tabel PTKP",
+   "options": "PTKP Item"
+  },
+  {
+   "fieldname": "tarif_progresif_table",
+   "fieldtype": "Table",
+   "label": "Tabel Tarif Progresif",
+   "options": "Tarif Progresif Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-11-26 09:25:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Konfigurasi PPh 21",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-26 09:25:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "nama_skema",
+  "rumus_upah_per_jam",
+  "overtime_rates"
+ ],
+ "fields": [
+  {
+   "fieldname": "nama_skema",
+   "fieldtype": "Data",
+   "label": "Nama Skema",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rumus_upah_per_jam",
+   "fieldtype": "Data",
+   "label": "Rumus Upah Per Jam"
+  },
+  {
+   "fieldname": "overtime_rates",
+   "fieldtype": "Table",
+   "label": "Overtime Rates",
+   "options": "Overtime Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 0,
+ "links": [],
+ "modified": "2025-11-26 09:25:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Overtime Calculation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

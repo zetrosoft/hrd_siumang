@@ -1,0 +1,1127 @@
+[
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_01",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 0,
+    "batas_penghasilan_bruto_bulanan_atas": 5400000,
+    "tarif_ter": 0.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_02",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 5400001,
+    "batas_penghasilan_bruto_bulanan_atas": 5650000,
+    "tarif_ter": 0.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_03",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 5650001,
+    "batas_penghasilan_bruto_bulanan_atas": 5950000,
+    "tarif_ter": 0.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_04",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 5950001,
+    "batas_penghasilan_bruto_bulanan_atas": 6300000,
+    "tarif_ter": 0.75
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_05",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 6300001,
+    "batas_penghasilan_bruto_bulanan_atas": 6750000,
+    "tarif_ter": 1.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_06",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 6750001,
+    "batas_penghasilan_bruto_bulanan_atas": 7500000,
+    "tarif_ter": 1.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_07",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 7500001,
+    "batas_penghasilan_bruto_bulanan_atas": 8550000,
+    "tarif_ter": 1.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_08",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 8550001,
+    "batas_penghasilan_bruto_bulanan_atas": 9650000,
+    "tarif_ter": 1.75
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_09",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 9650001,
+    "batas_penghasilan_bruto_bulanan_atas": 10050000,
+    "tarif_ter": 2.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_10",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 10050001,
+    "batas_penghasilan_bruto_bulanan_atas": 10350000,
+    "tarif_ter": 2.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_11",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 10350001,
+    "batas_penghasilan_bruto_bulanan_atas": 10700000,
+    "tarif_ter": 2.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_12",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 10700001,
+    "batas_penghasilan_bruto_bulanan_atas": 11050000,
+    "tarif_ter": 3.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_13",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 11050001,
+    "batas_penghasilan_bruto_bulanan_atas": 11600000,
+    "tarif_ter": 3.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_14",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 11600001,
+    "batas_penghasilan_bruto_bulanan_atas": 12500000,
+    "tarif_ter": 4.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_15",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 12500001,
+    "batas_penghasilan_bruto_bulanan_atas": 13750000,
+    "tarif_ter": 5.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_16",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 13750001,
+    "batas_penghasilan_bruto_bulanan_atas": 15100000,
+    "tarif_ter": 6.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_17",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 15100001,
+    "batas_penghasilan_bruto_bulanan_atas": 16950000,
+    "tarif_ter": 7.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_18",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 16950001,
+    "batas_penghasilan_bruto_bulanan_atas": 19750000,
+    "tarif_ter": 8.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_19",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 19750001,
+    "batas_penghasilan_bruto_bulanan_atas": 24150000,
+    "tarif_ter": 9.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_20",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 24150001,
+    "batas_penghasilan_bruto_bulanan_atas": 26450000,
+    "tarif_ter": 10.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_21",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 26450001,
+    "batas_penghasilan_bruto_bulanan_atas": 28000000,
+    "tarif_ter": 11.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_22",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 28000001,
+    "batas_penghasilan_bruto_bulanan_atas": 30050000,
+    "tarif_ter": 12.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_23",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 30050001,
+    "batas_penghasilan_bruto_bulanan_atas": 32400000,
+    "tarif_ter": 13.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_24",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 32400001,
+    "batas_penghasilan_bruto_bulanan_atas": 35400000,
+    "tarif_ter": 14.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_25",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 35400001,
+    "batas_penghasilan_bruto_bulanan_atas": 39100000,
+    "tarif_ter": 15.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_26",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 39100001,
+    "batas_penghasilan_bruto_bulanan_atas": 43850000,
+    "tarif_ter": 16.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_27",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 43850001,
+    "batas_penghasilan_bruto_bulanan_atas": 47800000,
+    "tarif_ter": 17.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_28",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 47800001,
+    "batas_penghasilan_bruto_bulanan_atas": 51400000,
+    "tarif_ter": 18.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_29",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 51400001,
+    "batas_penghasilan_bruto_bulanan_atas": 56300000,
+    "tarif_ter": 19.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_30",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 56300001,
+    "batas_penghasilan_bruto_bulanan_atas": 62200000,
+    "tarif_ter": 20.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_31",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 62200001,
+    "batas_penghasilan_bruto_bulanan_atas": 68600000,
+    "tarif_ter": 21.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_32",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 68600001,
+    "batas_penghasilan_bruto_bulanan_atas": 77500000,
+    "tarif_ter": 22.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_33",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 77500001,
+    "batas_penghasilan_bruto_bulanan_atas": 89000000,
+    "tarif_ter": 23.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_34",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 89000001,
+    "batas_penghasilan_bruto_bulanan_atas": 103000000,
+    "tarif_ter": 24.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_35",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 103000001,
+    "batas_penghasilan_bruto_bulanan_atas": 125000000,
+    "tarif_ter": 25.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_36",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 125000001,
+    "batas_penghasilan_bruto_bulanan_atas": 157000000,
+    "tarif_ter": 26.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_37",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 157000001,
+    "batas_penghasilan_bruto_bulanan_atas": 206000000,
+    "tarif_ter": 27.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_38",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 206000001,
+    "batas_penghasilan_bruto_bulanan_atas": 337000000,
+    "tarif_ter": 28.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_39",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 337000001,
+    "batas_penghasilan_bruto_bulanan_atas": 454000000,
+    "tarif_ter": 29.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_40",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 454000001,
+    "batas_penghasilan_bruto_bulanan_atas": 550000000,
+    "tarif_ter": 30.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_41",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 550000001,
+    "batas_penghasilan_bruto_bulanan_atas": 695000000,
+    "tarif_ter": 31.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_42",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 695000001,
+    "batas_penghasilan_bruto_bulanan_atas": 910000000,
+    "tarif_ter": 32.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_43",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 910000001,
+    "batas_penghasilan_bruto_bulanan_atas": 1400000000,
+    "tarif_ter": 33.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_A_44",
+    "kode_ptkp": "TK/0, TK/1, K/0",
+    "kategori_ter": "A",
+    "batas_penghasilan_bruto_bulanan_bawah": 1400000001,
+    "batas_penghasilan_bruto_bulanan_atas": null,
+    "tarif_ter": 34.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_01",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 0,
+    "batas_penghasilan_bruto_bulanan_atas": 6200000,
+    "tarif_ter": 0.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_02",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 6200001,
+    "batas_penghasilan_bruto_bulanan_atas": 6500000,
+    "tarif_ter": 0.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_03",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 6500001,
+    "batas_penghasilan_bruto_bulanan_atas": 6850000,
+    "tarif_ter": 0.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_04",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 6850001,
+    "batas_penghasilan_bruto_bulanan_atas": 7300000,
+    "tarif_ter": 0.75
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_05",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 7300001,
+    "batas_penghasilan_bruto_bulanan_atas": 9200000,
+    "tarif_ter": 1.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_06",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 9200001,
+    "batas_penghasilan_bruto_bulanan_atas": 10750000,
+    "tarif_ter": 1.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_07",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 10750001,
+    "batas_penghasilan_bruto_bulanan_atas": 11250000,
+    "tarif_ter": 2.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_08",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 11250001,
+    "batas_penghasilan_bruto_bulanan_atas": 11600000,
+    "tarif_ter": 2.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_09",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 11600001,
+    "batas_penghasilan_bruto_bulanan_atas": 12600000,
+    "tarif_ter": 3.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_10",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 12600001,
+    "batas_penghasilan_bruto_bulanan_atas": 13600000,
+    "tarif_ter": 4.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_11",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 13600001,
+    "batas_penghasilan_bruto_bulanan_atas": 14950000,
+    "tarif_ter": 5.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_12",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 14950001,
+    "batas_penghasilan_bruto_bulanan_atas": 16400000,
+    "tarif_ter": 6.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_13",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 16400001,
+    "batas_penghasilan_bruto_bulanan_atas": 18450000,
+    "tarif_ter": 7.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_14",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 18450001,
+    "batas_penghasilan_bruto_bulanan_atas": 21850000,
+    "tarif_ter": 8.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_15",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 21850001,
+    "batas_penghasilan_bruto_bulanan_atas": 26000000,
+    "tarif_ter": 9.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_16",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 26000001,
+    "batas_penghasilan_bruto_bulanan_atas": 27700000,
+    "tarif_ter": 10.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_17",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 27700001,
+    "batas_penghasilan_bruto_bulanan_atas": 29350000,
+    "tarif_ter": 11.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_18",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 29350001,
+    "batas_penghasilan_bruto_bulanan_atas": 31450000,
+    "tarif_ter": 12.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_19",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 31450001,
+    "batas_penghasilan_bruto_bulanan_atas": 33950000,
+    "tarif_ter": 13.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_20",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 33950001,
+    "batas_penghasilan_bruto_bulanan_atas": 37100000,
+    "tarif_ter": 14.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_21",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 37100001,
+    "batas_penghasilan_bruto_bulanan_atas": 41100000,
+    "tarif_ter": 15.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_22",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 41100001,
+    "batas_penghasilan_bruto_bulanan_atas": 45800000,
+    "tarif_ter": 16.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_23",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 45800001,
+    "batas_penghasilan_bruto_bulanan_atas": 49500000,
+    "tarif_ter": 17.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_24",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 49500001,
+    "batas_penghasilan_bruto_bulanan_atas": 53800000,
+    "tarif_ter": 18.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_25",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 53800001,
+    "batas_penghasilan_bruto_bulanan_atas": 58500000,
+    "tarif_ter": 19.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_26",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 58500001,
+    "batas_penghasilan_bruto_bulanan_atas": 64000000,
+    "tarif_ter": 20.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_27",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 64000001,
+    "batas_penghasilan_bruto_bulanan_atas": 71000000,
+    "tarif_ter": 21.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_28",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 71000001,
+    "batas_penghasilan_bruto_bulanan_atas": 80000000,
+    "tarif_ter": 22.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_29",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 80000001,
+    "batas_penghasilan_bruto_bulanan_atas": 93000000,
+    "tarif_ter": 23.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_30",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 93000001,
+    "batas_penghasilan_bruto_bulanan_atas": 109000000,
+    "tarif_ter": 24.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_31",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 109000001,
+    "batas_penghasilan_bruto_bulanan_atas": 129000000,
+    "tarif_ter": 25.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_32",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 129000001,
+    "batas_penghasilan_bruto_bulanan_atas": 163000000,
+    "tarif_ter": 26.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_33",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 163000001,
+    "batas_penghasilan_bruto_bulanan_atas": 211000000,
+    "tarif_ter": 27.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_34",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 211000001,
+    "batas_penghasilan_bruto_bulanan_atas": 374000000,
+    "tarif_ter": 28.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_35",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 374000001,
+    "batas_penghasilan_bruto_bulanan_atas": 459000000,
+    "tarif_ter": 29.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_36",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 459000001,
+    "batas_penghasilan_bruto_bulanan_atas": 555000000,
+    "tarif_ter": 30.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_37",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 555000001,
+    "batas_penghasilan_bruto_bulanan_atas": 704000000,
+    "tarif_ter": 31.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_38",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 704000001,
+    "batas_penghasilan_bruto_bulanan_atas": 957000000,
+    "tarif_ter": 32.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_39",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 957000001,
+    "batas_penghasilan_bruto_bulanan_atas": 1405000000,
+    "tarif_ter": 33.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_B_40",
+    "kode_ptkp": "TK/2, K/1, TK/3, K/2",
+    "kategori_ter": "B",
+    "batas_penghasilan_bruto_bulanan_bawah": 1405000001,
+    "batas_penghasilan_bruto_bulanan_atas": null,
+    "tarif_ter": 34.00
+  }, 
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_01",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 0,
+    "batas_penghasilan_bruto_bulanan_atas": 6600000,
+    "tarif_ter": 0.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_02",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 6600001,
+    "batas_penghasilan_bruto_bulanan_atas": 6950000,
+    "tarif_ter": 0.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_03",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 6950001,
+    "batas_penghasilan_bruto_bulanan_atas": 7350000,
+    "tarif_ter": 0.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_04",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 7350001,
+    "batas_penghasilan_bruto_bulanan_atas": 7800000,
+    "tarif_ter": 0.75
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_05",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 7800001,
+    "batas_penghasilan_bruto_bulanan_atas": 8850000,
+    "tarif_ter": 1.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_06",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 8850001,
+    "batas_penghasilan_bruto_bulanan_atas": 9800000,
+    "tarif_ter": 1.25
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_07",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 9800001,
+    "batas_penghasilan_bruto_bulanan_atas": 10550000,
+    "tarif_ter": 1.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_08",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 10550001,
+    "batas_penghasilan_bruto_bulanan_atas": 11300000,
+    "tarif_ter": 2.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_09",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 11300001,
+    "batas_penghasilan_bruto_bulanan_atas": 11900000,
+    "tarif_ter": 2.50
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_10",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 11900001,
+    "batas_penghasilan_bruto_bulanan_atas": 12950000,
+    "tarif_ter": 3.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_11",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 12950001,
+    "batas_penghasilan_bruto_bulanan_atas": 14150000,
+    "tarif_ter": 4.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_12",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 14150001,
+    "batas_penghasilan_bruto_bulanan_atas": 15550000,
+    "tarif_ter": 5.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_13",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 15550001,
+    "batas_penghasilan_bruto_bulanan_atas": 17050000,
+    "tarif_ter": 6.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_14",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 17050001,
+    "batas_penghasilan_bruto_bulanan_atas": 19500000,
+    "tarif_ter": 7.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_15",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 19500001,
+    "batas_penghasilan_bruto_bulanan_atas": 22700000,
+    "tarif_ter": 8.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_16",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 22700001,
+    "batas_penghasilan_bruto_bulanan_atas": 26600000,
+    "tarif_ter": 9.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_17",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 26600001,
+    "batas_penghasilan_bruto_bulanan_atas": 28100000,
+    "tarif_ter": 10.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_18",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 28100001,
+    "batas_penghasilan_bruto_bulanan_atas": 29850000,
+    "tarif_ter": 11.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_19",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 29850001,
+    "batas_penghasilan_bruto_bulanan_atas": 31900000,
+    "tarif_ter": 12.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_20",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 31900001,
+    "batas_penghasilan_bruto_bulanan_atas": 34450000,
+    "tarif_ter": 13.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_21",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 34450001,
+    "batas_penghasilan_bruto_bulanan_atas": 37600000,
+    "tarif_ter": 14.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_22",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 37600001,
+    "batas_penghasilan_bruto_bulanan_atas": 41500000,
+    "tarif_ter": 15.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_23",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 41500001,
+    "batas_penghasilan_bruto_bulanan_atas": 46250000,
+    "tarif_ter": 16.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_24",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 46250001,
+    "batas_penghasilan_bruto_bulanan_atas": 50000000,
+    "tarif_ter": 17.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_25",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 50000001,
+    "batas_penghasilan_bruto_bulanan_atas": 54300000,
+    "tarif_ter": 18.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_26",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 54300001,
+    "batas_penghasilan_bruto_bulanan_atas": 59000000,
+    "tarif_ter": 19.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_27",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 59000001,
+    "batas_penghasilan_bruto_bulanan_atas": 64500000,
+    "tarif_ter": 20.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_28",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 64500001,
+    "batas_penghasilan_bruto_bulanan_atas": 71500000,
+    "tarif_ter": 21.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_29",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 71500001,
+    "batas_penghasilan_bruto_bulanan_atas": 80500000,
+    "tarif_ter": 22.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_30",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 80500001,
+    "batas_penghasilan_bruto_bulanan_atas": 93500000,
+    "tarif_ter": 23.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_31",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 93500001,
+    "batas_penghasilan_bruto_bulanan_atas": 109500000,
+    "tarif_ter": 24.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_32",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 109500001,
+    "batas_penghasilan_bruto_bulanan_atas": 129500000,
+    "tarif_ter": 25.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_33",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 129500001,
+    "batas_penghasilan_bruto_bulanan_atas": 163500000,
+    "tarif_ter": 26.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_34",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 163500001,
+    "batas_penghasilan_bruto_bulanan_atas": 211500000,
+    "tarif_ter": 27.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_35",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 211500001,
+    "batas_penghasilan_bruto_bulanan_atas": 374500000,
+    "tarif_ter": 28.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_36",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 374500001,
+    "batas_penghasilan_bruto_bulanan_atas": 459500000,
+    "tarif_ter": 29.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_37",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 459500001,
+    "batas_penghasilan_bruto_bulanan_atas": 555500000,
+    "tarif_ter": 30.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_38",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 555500001,
+    "batas_penghasilan_bruto_bulanan_atas": 704500000,
+    "tarif_ter": 31.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_39",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 704500001,
+    "batas_penghasilan_bruto_bulanan_atas": 957500000,
+    "tarif_ter": 32.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_40",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 957500001,
+    "batas_penghasilan_bruto_bulanan_atas": 1405500000,
+    "tarif_ter": 33.00
+  },
+  {
+    "doctype": "Tarif Efektif Rerata",
+    "name": "TER_C_41",
+    "kode_ptkp": "K/3",
+    "kategori_ter": "C",
+    "batas_penghasilan_bruto_bulanan_bawah": 1405500001,
+    "batas_penghasilan_bruto_bulanan_atas": null,
+    "tarif_ter": 34.00
+  }
+]

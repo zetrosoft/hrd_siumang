@@ -1,0 +1,14 @@
+[
+    {
+        "doctype": "Custom Field",
+        "dt": "Employee",
+        "name":"Employee-status_pajak", 
+        "fieldname": "status_pajak",
+        "fieldtype": "Select",
+        "label": "Status Pajak",
+        "options": "\nTK/0\nTK/1\nK/0\nK/1\nK/2\nK/3",
+        "insert_after": "marital_status",
+        "reqd": 1,
+        "default": "TK/0"
+    }
+]

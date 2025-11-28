@@ -1,0 +1,27 @@
+[
+    {
+        "doctype": "Workflow State",
+        "name": "Pending L1 Approval",
+        "workflow_state_name": "Pending L1 Approval"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Pending HR Review",
+        "workflow_state_name": "Pending HR Review"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Pending HR Manager Approval",
+        "workflow_state_name": "Pending HR Manager Approval"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Approved by HR",
+        "workflow_state_name": "Approved by HR"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Cancelled",
+        "workflow_state_name": "Cancelled"
+    }
+]

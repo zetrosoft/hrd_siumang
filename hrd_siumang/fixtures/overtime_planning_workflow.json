@@ -1,0 +1,66 @@
+[
+    {
+        "doctype": "Workflow",
+        "name": "Overtime Planning Approval Workflow",
+        "workflow_name": "Overtime Planning Approval Workflow",
+        "document_type": "Overtime Planning",
+        "workflow_state_field": "status",
+        "is_active": 1,
+        "send_email_alert": 0,
+        "docstatus": 0,
+        "states": [
+            {"state": "Draft", "doc_status": "0", "allow_edit": "All"},
+            {"state": "Pending L1 Approval", "doc_status": "0", "allow_edit": "Employee"},
+            {"state": "Pending HR Review", "doc_status": "0", "allow_edit": "HR User"},
+            {"state": "Pending HR Manager Approval", "doc_status": "0", "allow_edit": "HR Manager"},
+            {"state": "Approved by HR", "doc_status": "0", "allow_edit": "HR User,HR Manager"},
+            {"state": "Submitted", "doc_status": "1", "allow_edit": "HR Manager"},
+            {"state": "Rejected", "doc_status": "0", "allow_edit": "All"}
+        ],
+        "transitions": [
+            {
+                "state": "Draft",
+                "action": "Ajukan Persetujuan",
+                "next_state": "Pending L1 Approval",
+                "allowed": "All",
+                "allow_self_approval": 1
+            },
+            {
+                "state": "Pending L1 Approval",
+                "action": "Approve",
+                "next_state": "Pending HR Review",
+                "allowed": "Employee"
+            },
+            {
+                "state": "Pending L1 Approval",
+                "action": "Reject",
+                "next_state": "Rejected",
+                "allowed": "Employee"
+            },
+            {
+                "state": "Pending HR Review",
+                "action": "Forward to Manager",
+                "next_state": "Pending HR Manager Approval",
+                "allowed": "HR User"
+            },
+            {
+                "state": "Pending HR Manager Approval",
+                "action": "Approve",
+                "next_state": "Approved by HR",
+                "allowed": "HR Manager"
+            },
+            {
+                "state": "Pending HR Manager Approval",
+                "action": "Reject",
+                "next_state": "Rejected",
+                "allowed": "HR Manager"
+            },
+            {
+                "state": "Approved by HR",
+                "action": "Reject",
+                "next_state": "Rejected",
+                "allowed": "HR User,HR Manager"
+            }
+        ]
+    }
+]
