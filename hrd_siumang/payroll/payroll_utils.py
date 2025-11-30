@@ -68,7 +68,7 @@ def calculate_pph21(doc, method=None):
 		frappe.msgprint(
 			f"DEBUG PPH: Rentang TER: Bawah={ter_item[0].batas_penghasilan_bruto_bulanan_bawah}, Atas={ter_item[0].batas_penghasilan_bruto_bulanan_atas}"
 		)
-		frappe.msgprint(f"DEBUG PPH: Menggunakan metode PPh 21 TER dengan tarif: {ter_rate*100}%")
+		frappe.msgprint(f"DEBUG PPH: Menggunakan metode PPh 21 TER dengan tarif: {ter_rate * 100}%")
 
 		# 4. Hitung PPh 21 Bulanan
 		pph21_bulanan = total_pendapatan_bruto_bulanan * ter_rate

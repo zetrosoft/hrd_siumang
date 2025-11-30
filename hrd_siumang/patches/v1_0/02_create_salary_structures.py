@@ -48,7 +48,7 @@ def execute():
 		"JHT Karyawan",
 		"JP Karyawan",
 		"JKN Karyawan",
-		"Tax",  # Diubah dari "Tax PPh21" ke "Tax"
+		"Tax PPh21",  # Diubah dari "Tax" ke "Tax PPh21" agar konsisten
 	]
 
 	for emp_type in employment_types:

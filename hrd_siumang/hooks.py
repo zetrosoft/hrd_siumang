@@ -16,6 +16,7 @@ fixtures = [
 		"file": "tarif_efektif_rerata.json",
 		"overwrite": True,
 	},  # Fixture TER baru
+	"Fingerspot Integration Log",  # Fixture baru
 ]
 
 # ... (bagian app_include_css, app_include_js, dll. tetap sama) ...
@@ -23,6 +24,8 @@ fixtures = [
 doctype_js = {
 	"Job Requisition": "hrd_siumang/public/js/job_requisition_client_script.js",
 	"Overtime Planning": "hrd_siumang/hrd_siumang/doctype/overtime_planning/overtime_planning.js",
+	"Payroll Validation Process": "hrd_siumang/hrd_siumang/doctype/payroll_validation_process/payroll_validation_process.js",
+	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",  # JS baru
 }
 doctype_list_js = {
 	"Overtime Planning": "hrd_siumang/public/js/overtime_planning_list.js"  # JS baru
@@ -40,4 +43,10 @@ doc_events = {
 	"Salary Structure Assignment": {
 		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
 	},  # Hook untuk otomatisasi CTC
+}
+
+scheduler_events = {
+	"all": [
+		"hrd_siumang.hrd_siumang.doctype.fingerspot_integration_log.fingerspot_integration_log.run_fingerspot_sync_from_scheduler"
+	]
 }

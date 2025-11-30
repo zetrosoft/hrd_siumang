@@ -1,0 +1,63 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-29 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "check_description",
+  "status_icon",
+  "details",
+  "resolution_link"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_description",
+   "fieldtype": "Data",
+   "label": "Check Description",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "status_icon",
+   "fieldtype": "Icon",
+   "label": "Status",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Small Text",
+   "label": "Details",
+   "read_only": 1
+  },
+  {
+   "fieldname": "resolution_link",
+   "fieldtype": "Link",
+   "label": "Resolution Link",
+   "options": "Employee",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Payroll Validation Result",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

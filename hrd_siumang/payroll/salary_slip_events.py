@@ -6,156 +6,125 @@ from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph2
 def calculate_payroll_components(doc, method):
 	"""
 	DocEvent for Salary Slip before_save.
-	Populates all components from the Salary Structure,
-	overriding with calculated values (Gaji Pokok, Tunjangan, BPJS, Overtime, PPh 21),
-	and setting JKN components to 0. Finally, sets the totals.
+	Refactored logic to correctly calculate all components, incorporate Additional Salary,
+	and populate child tables in a clean, sequential manner.
 	"""
-	# Clear existing earnings and deductions to avoid duplicates and ensure fresh population
+	# Clear existing tables to ensure a fresh calculation
 	doc.set("earnings", [])
 	doc.set("deductions", [])
 
 	# 1. Fetch Source Data
 	employee_id = doc.employee
-	ssa_records = frappe.get_all(
-		"Salary Structure Assignment",
-		filters={"employee": employee_id, "docstatus": 1, "from_date": ["<=", doc.start_date]},
-		fields=["name", "salary_structure", "from_date", "base"],
-		order_by="from_date desc",
-		limit=1,
+	ssa = frappe.get_doc("Salary Structure Assignment", {"employee": employee_id, "docstatus": 1})
+	if not ssa:
+		frappe.throw(f"No active Salary Structure Assignment found for Employee {employee_id}")
+
+	ea_doc = (
+		frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
+		if frappe.db.exists("Employee Allowance Data", {"employee": employee_id})
+		else None
 	)
-	if not ssa_records:
-		frappe.throw(
-			f"Tidak ada Salary Structure Assignment aktif ditemukan untuk Karyawan {employee_id} sebelum {doc.start_date}."
-		)
-	ssa_doc = frappe.get_doc("Salary Structure Assignment", ssa_records[0].name)
-	ea_records = frappe.get_all(
-		"Employee Allowance Data", filters={"employee": employee_id, "docstatus": 1}, fields=["name"]
-	)
-	ea_doc = frappe.get_doc("Employee Allowance Data", ea_records[0].name) if ea_records else None
 	salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
 
-	# 2. Calculate Base Values and preliminary components
-	base_amount = ssa_doc.base
-	print("--- DEBUG salary_slip_events ---")
-	print(f"base_amount: {base_amount}")
+	# --- Dictionaries to hold calculated values ---
+	earnings_map = {}
+	deductions_map = {}
+
+	# 2. Calculate Base, Allowances, and BPJS Base
+	base_amount = ssa.base
+	earnings_map["Gaji Pokok"] = base_amount
 
 	tunjangan_tetap = 0
 	if ea_doc:
-		tunjangan_jabatan = ea_doc.tunjangan_jabatan if ea_doc.tunjangan_jabatan else 0
-		tunjangan_komunikasi = ea_doc.tunjangan_komunikasi if ea_doc.tunjangan_komunikasi else 0
-		tunjangan_tetap += tunjangan_jabatan
-		tunjangan_tetap += tunjangan_komunikasi
-	print(f"tunjangan_tetap: {tunjangan_tetap}")
+		tunjangan_jabatan = ea_doc.tunjangan_jabatan or 0
+		tunjangan_komunikasi = ea_doc.tunjangan_komunikasi or 0
+		tunjangan_tetap = tunjangan_jabatan + tunjangan_komunikasi
+
+		earnings_map["Tunjangan Jabatan"] = tunjangan_jabatan
+		earnings_map["Tunjangan Komunikasi"] = tunjangan_komunikasi
+		earnings_map["Tunjangan Transport"] = ea_doc.tunjangan_transport or 0
+		earnings_map["Tunjangan Makan"] = ea_doc.tunjangan_makan or 0
+		earnings_map["Tunjangan Lain"] = ea_doc.tunjangan_lain or 0
+
 	bpjs_base = base_amount + tunjangan_tetap
-	print(f"bpjs_base: {bpjs_base}")
 
-	calculated_component_values = {}
+	# BPJS Ditanggung Perusahaan (Earnings)
+	earnings_map["JHT Perusahaan"] = round(bpjs_base * 0.037)
+	earnings_map["JKK Perusahaan"] = round(bpjs_base * 0.0089)
+	earnings_map["JKM Perusahaan"] = round(bpjs_base * 0.003)
+	earnings_map["JP Perusahaan"] = round(bpjs_base * 0.02)
+	earnings_map["JKN Perusahaan"] = 0  # Sesuai logika lama
 
-	# Populate Earnings
-	calculated_component_values["Gaji Pokok"] = base_amount
-	if ea_doc:
-		calculated_component_values["Tunjangan Jabatan"] = ea_doc.tunjangan_jabatan or 0
-		calculated_component_values["Tunjangan Komunikasi"] = ea_doc.tunjangan_komunikasi or 0
-		calculated_component_values["Tunjangan Transport"] = ea_doc.tunjangan_transport or 0
-		calculated_component_values["Tunjangan Makan"] = ea_doc.tunjangan_makan or 0
-		calculated_component_values["Tunjangan Lain"] = ea_doc.tunjangan_lain or 0
+	# BPJS Ditanggung Karyawan (Deductions)
+	deductions_map["JHT Karyawan"] = round(bpjs_base * 0.02)
+	deductions_map["JP Karyawan"] = round(bpjs_base * 0.01)
+	deductions_map["JKN Karyawan"] = 0  # Sesuai logika lama
 
-	calculated_component_values["JHT Perusahaan"] = round(bpjs_base * 0.037)
-	calculated_component_values["JKK Perusahaan"] = round(bpjs_base * 0.0089)
-	calculated_component_values["JKM Perusahaan"] = round(bpjs_base * 0.003)
-	calculated_component_values["JP Perusahaan"] = round(bpjs_base * 0.02)
-	calculated_component_values["JKN Perusahaan"] = 0
+	# 3. Calculate components that depend on other components (Overtime, LWP)
+	# Calculate Overtime and add to earnings
+	overtime_amount = calculate_overtime(doc)
+	earnings_map["Overtime"] = overtime_amount
 
-	# Calculate Absence Deduction
+	# Calculate Absence Deduction (LWP)
+	# This runs after the custom absence processing, so any remaining "Absent" are true LWP
 	absent_days = frappe.db.count(
 		"Attendance",
-		filters={
+		{
 			"employee": doc.employee,
 			"status": "Absent",
 			"attendance_date": ["between", (doc.start_date, doc.end_date)],
 		},
 	)
-
 	if absent_days > 0:
-		gaji_dasar_potongan = (
-			bpjs_base  # Menggunakan dasar yang sama dengan BPJS (Gaji Pokok + Tunjangan Tetap)
-		)
-		working_days_in_month = 25  # Asumsi hari kerja
-		gaji_per_hari = gaji_dasar_potongan / working_days_in_month
-		potongan_absensi = round(absent_days * gaji_per_hari)
-
-		print(f"DEBUG: Ditemukan {absent_days} hari absen. Potongan: {potongan_absensi}")
-		calculated_component_values["Potongan Absensi"] = potongan_absensi
+		working_days_in_month = 25  # Assumption
+		daily_rate_for_deduction = bpjs_base / working_days_in_month
+		deductions_map["Potongan Absensi"] = round(absent_days * daily_rate_for_deduction)
 	else:
-		calculated_component_values["Potongan Absensi"] = 0
+		deductions_map["Potongan Absensi"] = 0
 
-	# --- Populate Deductions (JHT Karyawan, JP Karyawan) ---
-	jht_karyawan_val = round(bpjs_base * 0.02)
-	jp_karyawan_val = round(bpjs_base * 0.01)
-	print(f"JHT Karyawan (dihitung): {jht_karyawan_val}")
-	print(f"JP Karyawan (dihitung): {jp_karyawan_val}")
-	calculated_component_values["JHT Karyawan"] = jht_karyawan_val
-	calculated_component_values["JP Karyawan"] = jp_karyawan_val
-	calculated_component_values["JKN Karyawan"] = 0
+	# 4. Fetch and Incorporate Additional Salary
+	additional_salaries = frappe.get_all(
+		"Additional Salary",
+		filters={
+			"employee": doc.employee,
+			"payroll_date": ["between", (doc.start_date, doc.end_date)],
+			"docstatus": 1,
+		},
+		fields=["salary_component", "amount", "type"],
+	)
 
-	# 3. Populate doc.earnings and doc.deductions fully BEFORE PPh 21 calculation
-	# Populate doc.earnings
-	for comp in salary_structure_doc.earnings:
-		amount = calculated_component_values.get(comp.salary_component, 0)
-		doc.append("earnings", {"salary_component": comp.salary_component, "amount": amount})
+	for ad_sal in additional_salaries:
+		if ad_sal.type == "Earning":
+			earnings_map[ad_sal.salary_component] = (
+				earnings_map.get(ad_sal.salary_component, 0) + ad_sal.amount
+			)
+		elif ad_sal.type == "Deduction":
+			deductions_map[ad_sal.salary_component] = (
+				deductions_map.get(ad_sal.salary_component, 0) + ad_sal.amount
+			)
 
-	all_deduction_components = {item.salary_component for item in salary_structure_doc.deductions}
-	custom_deduction_components = [
-		"JHT Karyawan",
-		"JP Karyawan",
-		"JKN Karyawan",
-		"Potongan Absensi",
-		"Potongan Lain-lain",
-		"PPh 21",
-	]
-	for comp in custom_deduction_components:
-		all_deduction_components.add(comp)
-	company_bpjs_components = [
-		"JHT Perusahaan",
-		"JKK Perusahaan",
-		"JKM Perusahaan",
-		"JP Perusahaan",
-		"JKN Perusahaan",
-	]
-	for comp in company_bpjs_components:
-		all_deduction_components.add(comp)
-
-	for component_name in sorted(list(all_deduction_components)):
-		if component_name in calculated_component_values:
-			amount = calculated_component_values.get(component_name, 0)
-			doc.append("deductions", {"salary_component": component_name, "amount": amount})
-
-	# Now that doc.earnings and doc.deductions are fully populated, calculate gross_pay and PPh 21
-	doc.gross_pay = sum(item.amount for item in doc.earnings)
-	overtime_amount = calculate_overtime(doc)
+	# 5. Calculate Gross Pay and then PPh 21
+	doc.gross_pay = sum(earnings_map.values())
 	pph21_amount = calculate_pph21(doc)
+	deductions_map["PPh 21"] = pph21_amount
 
-	calculated_component_values["Overtime"] = overtime_amount
-	calculated_component_values["PPh 21"] = pph21_amount
+	# 6. Final Population of child tables, respecting the order in Salary Structure
+	for comp_row in salary_structure_doc.earnings:
+		amount = earnings_map.get(comp_row.salary_component, 0)
+		if amount or comp_row.salary_component in earnings_map:  # Only add if value exists
+			doc.append("earnings", {"salary_component": comp_row.salary_component, "amount": amount})
 
-	# 4. Final Population of earnings and deductions to ensure correct order and all values are included
-	doc.set("earnings", [])
-	for comp in salary_structure_doc.earnings:
-		component_name = comp.salary_component
-		amount = calculated_component_values.get(component_name, 0)
-		doc.append("earnings", {"salary_component": component_name, "amount": amount})
+	for comp_row in salary_structure_doc.deductions:
+		amount = deductions_map.get(comp_row.salary_component, 0)
+		if amount or comp_row.salary_component in deductions_map:  # Only add if value exists
+			doc.append("deductions", {"salary_component": comp_row.salary_component, "amount": amount})
 
-	doc.set("deductions", [])
-	for comp in salary_structure_doc.deductions:
-		component_name = comp.salary_component
-		amount = calculated_component_values.get(component_name, 0)
-		doc.append("deductions", {"salary_component": component_name, "amount": amount})
+	# Add any ad-hoc deductions that were not in the structure
+	for comp, amount in deductions_map.items():
+		if not any(d.salary_component == comp for d in doc.deductions):
+			doc.append("deductions", {"salary_component": comp, "amount": amount})
 
-	# --- Final Totals ---
-	doc.gross_pay = sum(item.amount for item in doc.earnings)
-	doc.total_deduction = sum(item.amount for item in doc.deductions)
+	# 7. Set Final Totals
+	doc.gross_pay = sum(e.amount for e in doc.earnings)
+	doc.total_deduction = sum(d.amount for d in doc.deductions)
 	doc.net_pay = doc.gross_pay - doc.total_deduction
-
-	# DEBUG PPH 21 (frappe.msgprint for UI display)
-	frappe.msgprint(f"DEBUG FINAL PPH: Gross Pay untuk PPh 21: {doc.gross_pay}")
-	frappe.msgprint(f"DEBUG FINAL PPH: PPh 21 dihitung: {pph21_amount}")
