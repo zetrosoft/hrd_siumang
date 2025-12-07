@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestPayrollValidationProcess(FrappeTestCase):
+class TestOvertimePlanning(FrappeTestCase):
 	pass
