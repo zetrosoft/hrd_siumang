@@ -1,0 +1,121 @@
+{
+ "autoname": "hash",
+ "creation": "2025-12-08 10:30:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payroll_period",
+  "employee",
+  "attendance_date",
+  "attendance_status",
+  "is_lwp",
+  "overtime_hours",
+  "section_break_source_data",
+  "source_attendance_doc",
+  "source_leave_doc",
+  "source_overtime_doc"
+ ],
+ "fields": [
+  {
+   "fieldname": "payroll_period",
+   "fieldtype": "Link",
+   "label": "Payroll Period",
+   "options": "Payroll Period",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attendance_date",
+   "fieldtype": "Date",
+   "label": "Attendance Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attendance_status",
+   "fieldtype": "Select",
+   "label": "Attendance Status",
+   "options": "Present\nAbsent\nOn Leave\nHoliday\nHalf Day",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_lwp",
+   "fieldtype": "Check",
+   "label": "Is LWP"
+  },
+  {
+   "default": "0",
+   "fieldname": "overtime_hours",
+   "fieldtype": "Float",
+   "label": "Overtime Hours"
+  },
+  {
+   "fieldname": "section_break_source_data",
+   "fieldtype": "Section Break",
+   "label": "Source Data"
+  },
+  {
+   "fieldname": "source_attendance_doc",
+   "fieldtype": "Data",
+   "label": "Source Attendance Doc",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_leave_doc",
+   "fieldtype": "Data",
+   "label": "Source Leave Doc",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_overtime_doc",
+   "fieldtype": "Data",
+   "label": "Source Overtime Doc",
+   "read_only": 1
+  }
+ ],
+ "issingle": 0,
+ "istable": 0,
+ "modified": "2025-12-08 10:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "HRD Siumang",
+ "name": "Payroll Attendance Summary",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "attendance_date",
+ "sort_order": "ASC",
+ "track_changes": 1,
+ "is_submittable": 0,
+ "title_field": "employee"
+}

@@ -1,199 +1,176 @@
-// Copyright (c) 2025, PT. SIUMANG TEMAN SUKSES and contributors
-// For license information, please see license.txt
-
 frappe.ui.form.on("Validasi Kesiapan Payroll", {
 	refresh: function (frm) {
-		// Hapus semua tombol custom yang ada untuk menghindari duplikasi
-		frm.clear_custom_buttons();
+		frm.clear_custom_buttons(); // Clear all old buttons
 
-		// Tambahkan tombol "Proses Absensi" (Aksi Utama - standalone)
-		frm.add_custom_button(__("Proses Absensi"), function () {
-			// Periksa apakah tanggal sudah diisi
-			if (!frm.doc.start_date || !frm.doc.end_date) {
-				frappe.msgprint({
-					title: __("Input Diperlukan"),
-					indicator: "orange",
-					message: __("Harap tentukan Start Date dan End Date sebelum memulai proses."),
-				});
-				return;
-			}
-
-			frappe.confirm(
-				'Anda yakin ingin memulai proses Validasi Absensi?<br><br>Sistem akan melakukan langkah-langkah berikut:<br><ul><li>Membersihkan semua data absensi dan pengajuan cuti untuk periode yang dipilih.</li><li>Mengidentifikasi hari kerja setiap karyawan berdasarkan daftar hari libur dan penugasan shift.</li><li>Mencatat hari kerja tanpa kehadiran sebagai "Absent".</li><li>Mengonversi "Absent" menjadi "Cuti" jika saldo cuti tersedia.</li></ul>Ringkasan hasil proses akan ditampilkan setelah selesai.',
-				function () {
-					// Tampilkan indikator proses
-					frappe.show_progress(
-						__("Memproses"),
-						__("Memvalidasi data absensi..."),
-						__("Mohon tunggu")
-					);
-
-					// Panggil metode Python di sisi server
-					frappe.call({
-						method: "run_absence_validation_logic",
-						doc: frm.doc, // Mengirim seluruh dokumen sebagai konteks
-						callback: function (r) {
-							frappe.hide_progress();
-							if (r.message) {
-								// 1. Update properti tampilan field HTML secara langsung
-								frm.set_df_property("hasil_validasi", "options", r.message);
-								// 2. Update objek dokumen untuk memastikan nilai tersimpan
-								frm.doc.hasil_validasi = r.message;
-
-								// 3. Simpan dokumen untuk mem-persist perubahan
-								frm.save({
-									callback: function (save_response) {
-										if (save_response && !save_response.exc) {
-											// Periksa penyimpanan yang berhasil
-											frappe.msgprint({
-												title: __("Proses Selesai & Tersimpan"),
-												indicator: "green",
-												message: __(
-													"Hasil validasi telah disimpan. Memuat ulang form..."
-												),
-											});
-											// Muat ulang form untuk menampilkan konten HTML yang disimpan secara persisten
-											frm.reload_doc();
-										} else {
-											frappe.msgprint({
-												title: __("Error Saat Menyimpan"),
-												indicator: "red",
-												message: __(
-													"Terjadi error saat menyimpan hasil validasi. Silakan cek Error Log."
-												),
-											});
-										}
-									},
-									freeze: true,
-									freeze_message: __("Menyimpan hasil validasi..."),
-								});
-							} else {
-								frappe.msgprint({
-									title: __("Proses Selesai"),
-									indicator: "blue",
-									message: __("Tidak ada pesan hasil dari server."),
-								});
-							}
-						},
-						error: function (r) {
-							frappe.hide_progress();
-							frappe.msgprint({
-								title: __("Error Umum"),
-								indicator: "red",
-								message: __(
-									"Terjadi error saat memproses. Silakan cek Error Log untuk detail."
-								),
-							});
-						},
-					});
-				}
-			);
-		}); // Tombol "Proses Absensi" tanpa grup
-
-		// Tambahkan tombol "Laporan Lembur" (dalam grup Laporan)
+		// Add the new unified button
 		frm.add_custom_button(
-			__("Laporan Lembur"),
+			__("Prepare Payroll Attendance Data"),
 			function () {
-				if (!frm.doc.start_date || !frm.doc.end_date) {
-					frappe.msgprint({
-						title: __("Input Diperlukan"),
-						indicator: "orange",
-						message: __("Harap tentukan Start Date dan End Date terlebih dahulu."),
-					});
-					return;
-				}
-				frappe.show_progress(
-					__("Memproses"),
-					__("Menghasilkan laporan lembur..."),
-					__("Mohon tunggu")
+				handle_process_start(
+					frm,
+					"enqueue_prepare_payroll_data", // New unified enqueue method
+					"payroll_attendance_summary_link" // Result field (HTML link)
 				);
-				frappe.call({
-					method: "get_overtime_report_data",
-					doc: frm.doc,
-					callback: function (r) {
-						frappe.hide_progress();
-						if (r.message) {
-							frm.set_df_property("hasil_validasi", "options", r.message);
-							frm.doc.hasil_validasi = r.message; // Update doc for potential save if user clicks save manually
-							frappe.msgprint({
-								title: __("Laporan Lembur Siap"),
-								indicator: "green",
-								message: __("Laporan lembur telah dimuat di bawah."),
-							});
-						} else {
-							frappe.msgprint({
-								title: __("Laporan Lembur"),
-								indicator: "blue",
-								message: __("Tidak ada data lembur untuk ditampilkan."),
-							});
-						}
-					},
-					error: function (r) {
-						frappe.hide_progress();
-						frappe.msgprint({
-							title: __("Error Laporan Lembur"),
-							indicator: "red",
-							message: __(
-								"Terjadi error saat mengambil laporan lembur. Silakan cek Error Log."
-							),
-						});
-					},
-				});
 			},
-			__("Laporan")
-		); // Group for reports
+			__("Actions")
+		).attr("id", "btn-prepare-payroll-data"); // Add an ID for easier manipulation
 
-		// Tambahkan tombol "Laporan Cuti" (dalam grup Laporan)
-		frm.add_custom_button(
-			__("Laporan Cuti"),
-			function () {
-				if (!frm.doc.start_date || !frm.doc.end_date) {
-					frappe.msgprint({
-						title: __("Input Diperlukan"),
-						indicator: "orange",
-						message: __("Harap tentukan Start Date dan End Date terlebih dahulu."),
-					});
-					return;
-				}
-				frappe.show_progress(
-					__("Memproses"),
-					__("Menghasilkan laporan cuti..."),
-					__("Mohon tunggu")
-				);
-				frappe.call({
-					method: "get_leave_report_data",
-					doc: frm.doc,
-					callback: function (r) {
-						frappe.hide_progress();
-						if (r.message) {
-							frm.set_df_property("hasil_validasi", "options", r.message);
-							frm.doc.hasil_validasi = r.message; // Update doc for potential save if user clicks save manually
-							frappe.msgprint({
-								title: __("Laporan Cuti Siap"),
-								indicator: "green",
-								message: __("Laporan cuti telah dimuat di bawah."),
-							});
-						} else {
-							frappe.msgprint({
-								title: __("Laporan Cuti"),
-								indicator: "blue",
-								message: __("Tidak ada data cuti untuk ditampilkan."),
-							});
-						}
-					},
-					error: function (r) {
-						frappe.hide_progress();
-						frappe.msgprint({
-							title: __("Error Laporan Cuti"),
-							indicator: "red",
-							message: __(
-								"Terjadi error saat mengambil laporan cuti. Silakan cek Error Log."
-							),
-						});
-					},
-				});
-			},
-			__("Laporan")
-		); // Group for reports
+		// Initial state update for the button
+		update_prepare_button_state(frm);
+	},
+
+	// Handle changes to the period selection
+	payroll_period_link: function (frm) {
+		update_prepare_button_state(frm);
+	},
+
+	// Handle changes to each checklist item
+	checklist_master_active_employees: function (frm) {
+		update_prepare_button_state(frm);
+	},
+	checklist_company_holiday_list: function (frm) {
+		update_prepare_button_state(frm);
+	},
+	checklist_daily_attendance_data: function (frm) {
+		update_prepare_button_state(frm);
+	},
+	checklist_approved_leave_applications: function (frm) {
+		update_prepare_button_state(frm);
+	},
+	checklist_perencanaan_lembur_disetujui: function (frm) {
+		update_prepare_button_state(frm);
+	},
+	checklist_konfigurasi_hr_settings: function (frm) {
+		update_prepare_button_state(frm);
 	},
 });
+
+function update_prepare_button_state(frm) {
+	const prepareButton = $("#btn-prepare-payroll-data"); // Mengambil tombol berdasarkan ID
+	const payrollPeriodSelected = frm.doc.payroll_period_link;
+
+	// --- KODE DEBUGGING frm.doc ---
+	console.log("--- Debugging frm.doc sebelum dikirim ke server ---");
+	console.log("Nilai frm.doc yang akan dikirim:", frm.doc);
+	console.log("Status checklist di frm.doc:");
+	console.log("  payroll_period_link:", frm.doc.payroll_period_link);
+	console.log("  checklist_master_active_employees:", frm.doc.checklist_master_active_employees);
+	console.log("  checklist_company_holiday_list:", frm.doc.checklist_company_holiday_list);
+	console.log("  checklist_daily_attendance_data:", frm.doc.checklist_daily_attendance_data);
+	console.log(
+		"  checklist_approved_leave_applications:",
+		frm.doc.checklist_approved_leave_applications
+	);
+	console.log(
+		"  checklist_perencanaan_lembur_disetujui:",
+		frm.doc.checklist_perencanaan_lembur_disetujui
+	);
+	console.log("  checklist_konfigurasi_hr_settings:", frm.doc.checklist_konfigurasi_hr_settings);
+	console.log("--- Akhir Debugging frm.doc ---");
+
+	if (!payrollPeriodSelected) {
+		prepareButton.prop("disabled", true);
+		frm.set_df_property(
+			"button_prepare_payroll_data",
+			"description",
+			__("Pilih Periode Penggajian terlebih dahulu.")
+		);
+		return;
+	}
+
+	frappe.call({
+		doc: frm.doc,
+		method: "check_payroll_readiness",
+		args: {
+			current_doc: frm.doc,
+		},
+		callback: function (r) {
+			console.log("--- Debugging Tombol ---");
+			console.log("Status dari check_payroll_readiness (Python):", r.message);
+			console.log("Referensi tombol prepareButton (objek jQuery):", prepareButton);
+			console.log("Apakah tombol prepareButton ada di DOM?", prepareButton.length > 0);
+			console.log(
+				"Status disabled tombol sebelum perubahan:",
+				prepareButton.prop("disabled")
+			);
+
+			if (r.message === true) {
+				prepareButton.prop("disabled", false);
+				console.log("Perintah: prepareButton.prop('disabled', false) dieksekusi.");
+				console.log(
+					"Status disabled tombol setelah perintah:",
+					prepareButton.prop("disabled")
+				);
+				frm.set_df_property(
+					"button_prepare_payroll_data",
+					"description",
+					__("Semua prasyarat terpenuhi. Klik untuk menyiapkan data.")
+				);
+			} else {
+				prepareButton.prop("disabled", true);
+				console.log("Perintah: prepareButton.prop('disabled', true) dieksekusi.");
+				console.log(
+					"Status disabled tombol setelah perintah:",
+					prepareButton.prop("disabled")
+				);
+				frm.set_df_property(
+					"button_prepare_payroll_data",
+					"description",
+					__(
+						"Centang semua item checklist di atas dan pilih periode penggajian yang valid untuk mengaktifkan tombol."
+					)
+				);
+			}
+			console.log("--- Akhir Debugging Tombol ---");
+		},
+	});
+}
+
+function handle_process_start(frm, method, result_field) {
+	if (!frm.doc.payroll_period_link) {
+		frappe.msgprint(__("Harap pilih Periode Penggajian terlebih dahulu."));
+		return;
+	}
+
+	// Initial progress bar
+	frappe.show_progress(__("Memulai Proses Persiapan Data"), 0, 100);
+
+	frappe.call({
+		doc: frm.doc,
+		method: method, // This calls enqueue_prepare_payroll_data
+		args: {
+			// No args needed here as doc is passed via 'doc: frm.doc'
+			// and the worker will fetch period details from payroll_period_link
+		},
+		realtime: true, // Crucial for background job progress
+		callback: function (r) {
+			frappe.hide_progress();
+			frappe.show_alert({
+				message: __("Proses selesai! Me-refresh form..."),
+				indicator: "green",
+			});
+
+			// Reload the entire document from the database to get the latest data.
+			// This is the most reliable method.
+			frm.reload_doc().then(() => {
+				// After the document has successfully reloaded, switch to the result section
+				// The payroll_attendance_summary_link (HTML field) will show the link
+				frm.scroll_to_field("payroll_attendance_summary_link");
+			});
+		},
+		error: function (r) {
+			frappe.hide_progress();
+			let error_message = __("Terjadi error saat memanggil proses di server.");
+			if (r.exc) {
+				error_message += "<br>" + r.exc.split("\n").pop().trim(); // Get last line of traceback
+			}
+			frappe.show_alert({ message: error_message, indicator: "red" });
+		},
+		progress: function (data) {
+			// Update the progress bar based on backend publications
+			if (data.progress) {
+				frappe.show_progress(__(data.title || "Memproses..."), data.progress, 100);
+			}
+		},
+	});
+}

@@ -13,9 +13,8 @@
             {"state": "Pending L1 Approval", "doc_status": "0", "allow_edit": "Employee"},
             {"state": "Pending HR Review", "doc_status": "0", "allow_edit": "HR User"},
             {"state": "Pending HR Manager Approval", "doc_status": "0", "allow_edit": "HR Manager"},
-            {"state": "Approved by HR", "doc_status": "0", "allow_edit": "HR Manager"},
-            {"state": "Submitted", "doc_status": "1", "allow_edit": "HR Manager"},
-            {"state": "Rejected", "doc_status": "0", "allow_edit": "All"}
+            {"state": "Approved by HR", "doc_status": "1", "allow_edit": "HR Manager"},
+            {"state": "Rejected", "doc_status": "0", "allow_edit": "Employee"}
         ],
         "transitions": [
             {
@@ -54,12 +53,6 @@
                 "action": "Reject",
                 "next_state": "Rejected",
                 "allowed": "HR Manager"
-            },
-            {
-                "state": "Approved by HR",
-                "action": "Reject",
-                "next_state": "Rejected",
-                "allowed": "HR User"
             }
         ]
     }

@@ -5,49 +5,103 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_1",
-  "start_date",
-  "end_date",
-  "column_break_1",
-  "section_break_2",
-  "hasil_validasi"
+  "section_break_period_selection",
+  "payroll_period_link",
+  "section_break_checklist",
+  "checklist_master_active_employees",
+  "checklist_company_holiday_list",
+  "checklist_daily_attendance_data",
+  "checklist_approved_leave_applications",
+  "checklist_approved_overtime_planning",
+  "checklist_hr_settings_configuration",
+  "button_prepare_payroll_data",
+  "section_break_result",
+  "payroll_attendance_summary_link"
  ],
  "fields": [
   {
-   "fieldname": "section_break_1",
+   "fieldname": "section_break_period_selection",
    "fieldtype": "Section Break",
-   "label": "Periode Payroll"
+   "label": "Pilihan Periode Penggajian"
   },
   {
-   "fieldname": "start_date",
-   "fieldtype": "Date",
-   "label": "Start Date",
-   "reqd": 1
+   "fieldname": "payroll_period_link",
+   "fieldtype": "Link",
+   "label": "Pilih Periode Penggajian",
+   "options": "Payroll Period",
+   "reqd": 1,
+   "description": "Pilih periode penggajian yang akan divalidasi dan disiapkan datanya."
   },
   {
-   "fieldname": "end_date",
-   "fieldtype": "Date",
-   "label": "End Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_2",
+   "fieldname": "section_break_checklist",
    "fieldtype": "Section Break",
-   "label": "Hasil Validasi"
+   "label": "Daftar Kesiapan Data Payroll"
   },
   {
-   "fieldname": "hasil_validasi",
-   "fieldtype": "Text Editor",
-   "label": "Hasil Validasi"
+   "fieldname": "checklist_master_active_employees",
+   "fieldtype": "Check",
+   "label": "Master Data Karyawan Aktif Valid",
+   "default": 0,
+   "description": "Pastikan semua data karyawan aktif sudah lengkap dan benar."
+  },
+  {
+   "fieldname": "checklist_company_holiday_list",
+   "fieldtype": "Check",
+   "label": "Daftar Hari Libur Perusahaan Valid",
+   "default": 0,
+   "description": "Pastikan daftar hari libur perusahaan untuk periode ini sudah terdaftar dan lengkap."
+  },
+  {
+   "fieldname": "checklist_daily_attendance_data",
+   "fieldtype": "Check",
+   "label": "Data Absensi Harian Tersedia",
+   "default": 0,
+   "description": "Pastikan semua data absensi karyawan untuk periode ini sudah diimpor/tersedia."
+  },
+  {
+   "fieldname": "checklist_approved_leave_applications",
+   "fieldtype": "Check",
+   "label": "Semua Pengajuan Cuti Disetujui",
+   "default": 0,
+   "description": "Pastikan semua pengajuan cuti (termasuk LWP) untuk periode ini sudah diproses dan disetujui."
+  },
+  {
+   "fieldname": "checklist_perencanaan_lembur_disetujui",
+   "fieldtype": "Check",
+   "label": "Semua Perencanaan Lembur Disetujui",
+   "default": 0,
+   "description": "Pastikan semua perencanaan lembur untuk periode ini sudah diproses dan disetujui."
+  },
+  {
+   "fieldname": "checklist_konfigurasi_hr_settings",
+   "fieldtype": "Check",
+   "label": "Konfigurasi HR Settings Valid",
+   "default": 0,
+   "description": "Pastikan pengaturan HR seperti 'Standard Working Hours' sudah benar."
+  },
+  {
+   "fieldname": "button_prepare_payroll_data",
+   "fieldtype": "Column Break",
+   "label": "Siapkan Data Kehadiran Payroll",
+   "description": "Tombol ini akan aktif jika semua checklist di atas telah dicentang."
+  },
+  {
+   "fieldname": "section_break_result",
+   "fieldtype": "Section Break",
+   "label": "Hasil Proses"
+  },
+  {
+   "fieldname": "payroll_attendance_summary_link",
+   "fieldtype": "HTML",
+   "label": "Link ke Ringkasan Kehadiran Payroll",
+   "read_only": 1,
+   "options": "<p>Klik <a href='/app/payroll-attendance-summary?payroll_period=[payroll_period_link]'>di sini</a> untuk melihat data yang sudah disiapkan.</p>",
+   "depends_on": "eval:doc.payroll_period_link"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-12-05 10:15:00.000000",
+ "modified": "2025-12-08 11:05:00.000000",
  "modified_by": "Administrator",
  "module": "HRD Siumang",
  "name": "Validasi Kesiapan Payroll",
