@@ -5,6 +5,11 @@ app_description = "HRD Siumang Custom Apps"
 app_email = "support@bijaktechnology.com"
 app_license = "mit"
 
+override_doctype_class = {
+	"Salary Slip": "hrd_siumang.overrides.custom_salary_slip.CustomSalarySlip",
+	"Payroll Entry": "hrd_siumang.overrides.custom_payroll_entry.CustomPayrollEntry",
+}
+
 fixtures = [
 	"payroll_fixtures.json",
 	{"doctype": "Custom Field", "filters": [["module", "=", "hrd_siumang"]]},
@@ -31,9 +36,7 @@ doctype_list_js = {"Overtime Planning": "hrd_siumang/public/js/overtime_planning
 doc_events = {
 	"Job Requisition": {"before_save": "hrd_siumang.overrides.job_requisition_override.before_save"},
 	"Overtime Planning": {"on_update": "hrd_siumang.doc_events.overtime_planning_events.on_update_or_submit"},
-	"Salary Slip": {
-		"before_save": "hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"
-	},  # KEMBALIKAN ke before_save, karena patch sudah menangani konflik
+	"Salary Slip": {"before_save": "hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"},
 	"Salary Structure Assignment": {
 		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
 	},
