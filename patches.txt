@@ -1,0 +1,4 @@
+# hrd_siumang.patches.v1_0.01_create_salary_components.execute
+# hrd_siumang.patches.v1_0.02_create_salary_structures.execute
+# hrd_siumang.patches.v1_0.03_assign_structures.execute
+hrd_siumang.patches.v2_0.rebuild_payroll_setup.execute

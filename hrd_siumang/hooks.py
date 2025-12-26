@@ -19,31 +19,24 @@ fixtures = [
 	"Fingerspot Integration Log",  # Fixture baru
 ]
 
-# ... (bagian app_include_css, app_include_js, dll. tetap sama) ...
-
 doctype_js = {
 	"Job Requisition": "hrd_siumang/public/js/job_requisition_client_script.js",
 	"Overtime Planning": "hrd_siumang/hrd_siumang/doctype/overtime_planning/overtime_planning.js",
 	"Payroll Validation Process": "hrd_siumang/hrd_siumang/doctype/payroll_validation_process/payroll_validation_process.js",
 	"Validasi Kesiapan Payroll": "hrd_siumang/hrd_siumang/doctype/validasi_kesiapan_payroll/validasi_kesiapan_payroll.js",
-	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",  # JS baru
+	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",
 }
-doctype_list_js = {
-	"Overtime Planning": "hrd_siumang/public/js/overtime_planning_list.js"  # JS baru
-}
-# ... (bagian lainnya tetap sama) ...
+doctype_list_js = {"Overtime Planning": "hrd_siumang/public/js/overtime_planning_list.js"}
 
 doc_events = {
 	"Job Requisition": {"before_save": "hrd_siumang.overrides.job_requisition_override.before_save"},
-	"Overtime Planning": {
-		"on_update": "hrd_siumang.doc_events.overtime_planning_events.on_update_or_submit"
-	},  # Hook lama
+	"Overtime Planning": {"on_update": "hrd_siumang.doc_events.overtime_planning_events.on_update_or_submit"},
 	"Salary Slip": {
 		"before_save": "hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"
-	},  # Hook baru
+	},  # KEMBALIKAN ke before_save, karena patch sudah menangani konflik
 	"Salary Structure Assignment": {
 		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
-	},  # Hook untuk otomatisasi CTC
+	},
 }
 
 scheduler_events = {

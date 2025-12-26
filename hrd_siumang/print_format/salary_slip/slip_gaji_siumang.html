@@ -177,10 +177,6 @@
             <div class="column">
                 <p class="section-title">I. Pendapatan</p>
                 <table class="item-detail-table">
-                    <tr>
-                        <td class="component-label">Gaji Pokok</td>
-                        <td class="currency-prefix">: Rp.</td>
-                        <td class="amount-value">{{ frappe.format(doc.base, "Currency") if doc.base else '-' }}</td>
                     </tr>
                     {% for item in doc.earnings %}
                     <tr>
@@ -195,10 +191,6 @@
             <div class="column">
                 <p class="section-title">II. Potongan</p>
                 <table class="item-detail-table">
-                    <tr>
-                        <td class="component-label">Absensi</td>
-                        <td class="currency-prefix">: Rp.</td>
-                        <td class="amount-value">-</td>
                     </tr>
                     {% for item in doc.deductions %}
                     <tr>

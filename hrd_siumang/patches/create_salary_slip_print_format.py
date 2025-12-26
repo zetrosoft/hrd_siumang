@@ -210,11 +210,6 @@ def execute():
             <div class="column">
                 <p class="section-title">I. Pendapatan</p>
                 <table class="item-detail-table">
-                    <tr>
-                        <td class="component-label">Gaji Pokok</td>
-                        <td class="currency-prefix"></td>
-                        <td class="amount-value">{{ frappe.format(doc.base, "Currency", 0) if doc.base else '-' }}</td>
-                    </tr>
                     {% for item in doc.earnings %}
                     <tr>
                         <td class="component-label">{{ item.salary_component }}</td>
@@ -228,11 +223,6 @@ def execute():
             <div class="column">
                 <p class="section-title">II. Potongan</p>
                 <table class="item-detail-table">
-                    <tr>
-                        <td class="component-label">Absensi</td>
-                        <td class="currency-prefix"></td>
-                        <td class="amount-value">-</td>
-                    </tr>
                     {% for item in doc.deductions %}
                     <tr>
                         <td class="component-label">{{ item.salary_component }}</td>

@@ -103,16 +103,16 @@
     "reqd":1,
     "name": "Job Requisition-status_pernikahan"
   },
-  {
-    "doctype": "Custom Field",
-    "dt": "Job Requisition",
-    "fieldname": "keahlian_section",
-    "fieldtype": "Section Break",
-    "label": "Keahlian",
-    "module": "hrd_siumang",
-    "reqd":1,
-    "name": "Job Requisition-keahlian_section"
-  },
+    {
+      "doctype": "Custom Field",
+      "dt": "Job Requisition",
+      "fieldname": "keahlian_section",
+      "fieldtype": "Section Break",
+      "label": "Keahlian",
+      "module": "hrd_siumang",
+      "reqd": 0,
+      "name": "Job Requisition-keahlian_section"
+    },
   {
     "doctype": "Custom Field",
     "dt": "Job Requisition",

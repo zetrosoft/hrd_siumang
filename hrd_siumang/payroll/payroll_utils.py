@@ -11,6 +11,10 @@ def calculate_pph21(doc, method=None):
 	Menghitung PPh 21 bulanan untuk seorang karyawan berdasarkan data pada Salary Slip
 	menggunakan metode Tarif Efektif Rerata (TER).
 	"""
+	frappe.msgprint(
+		f"DEBUG PPH UNCONDITIONAL: calculate_pph21 called for {doc.employee}. frappe.request: {frappe.request}"
+	)
+
 	try:
 		# 1. Ambil Data Karyawan
 		employee = frappe.get_doc("Employee", doc.employee)
@@ -51,6 +55,7 @@ def calculate_pph21(doc, method=None):
 			],
 			limit=1,
 		)
+		frappe.msgprint(f"DEBUG PPH: ter_item found: {ter_item}")
 
 		if not ter_item:
 			frappe.msgprint(
@@ -63,6 +68,7 @@ def calculate_pph21(doc, method=None):
 
 		ter_rate_percent = ter_item[0].tarif_ter
 		ter_rate = ter_rate_percent / 100
+		frappe.msgprint(f"DEBUG PPH: ter_rate_percent: {ter_rate_percent}, ter_rate: {ter_rate}")
 
 		frappe.msgprint(f"DEBUG PPH: Tarif TER ditemukan. Persen: {ter_rate_percent}%, Rate: {ter_rate}")
 		frappe.msgprint(
@@ -72,6 +78,7 @@ def calculate_pph21(doc, method=None):
 
 		# 4. Hitung PPh 21 Bulanan
 		pph21_bulanan = total_pendapatan_bruto_bulanan * ter_rate
+		frappe.msgprint(f"DEBUG PPH: pph21_bulanan (raw): {pph21_bulanan}")
 
 		frappe.msgprint(f"DEBUG PPH: PPh 21 Bulanan (sebelum pembulatan): {pph21_bulanan}")
 

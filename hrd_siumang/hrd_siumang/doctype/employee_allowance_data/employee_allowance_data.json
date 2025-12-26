@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-11-26 09:25:00.000000",
+ "creation": "2025-11-26 09:25:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -10,12 +10,14 @@
   "tunjangan_komunikasi",
   "tunjangan_transport",
   "tunjangan_makan",
-  "tunjangan_lain"
+  "tunjangan_lain",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1,
@@ -45,30 +47,28 @@
    "fieldname": "tunjangan_lain",
    "fieldtype": "Currency",
    "label": "Tunjangan Lain"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Employee Allowance Data",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "issingle": 0,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-11-26 09:25:00.000000",
+ "modified": "2025-12-26 08:10:03.555452",
  "modified_by": "Administrator",
  "module": "hrd_siumang",
  "name": "Employee Allowance Data",
  "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
- ],
+ "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

@@ -1,4 +1,5 @@
-hrd_siumang.patches.v1_0.01_create_salary_components
-hrd_siumang.patches.v1_0.02_create_salary_structures
-hrd_siumang.patches.v1_0.03_assign_structures
-hrd_siumang.patches.create_salary_slip_print_format
+#hrd_siumang.patches.v1_0.01_create_salary_components
+#hrd_siumang.patches.v1_0.02_create_salary_structures
+#hrd_siumang.patches.v1_0.03_assign_structures
+#hrd_siumang.patches.create_salary_slip_print_format
+hrd_siumang.patches.v2_0.rebuild_payroll_setup
