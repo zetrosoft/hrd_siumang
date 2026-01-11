@@ -1,0 +1,51 @@
+
+[
+    {
+        "doctype": "Workflow State",
+        "name": "Draft",
+        "doc_status": "0",
+        "is_optional": 0,
+        "state": "Draft",
+        "workflow_state_name": "Draft"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Pending Manager Approval",
+        "doc_status": "0",
+        "is_optional": 0,
+        "state": "Pending Manager Approval",
+        "workflow_state_name": "Pending Manager Approval"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Pending HR Manager Approval",
+        "doc_status": "0",
+        "is_optional": 0,
+        "state": "Pending HR Manager Approval",
+        "workflow_state_name": "Pending HR Manager Approval"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Pending Director Approval",
+        "doc_status": "0",
+        "is_optional": 0,
+        "state": "Pending Director Approval",
+        "workflow_state_name": "Pending Director Approval"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Submitted",
+        "doc_status": "1",
+        "is_optional": 0,
+        "state": "Submitted",
+        "workflow_state_name": "Submitted"
+    },
+    {
+        "doctype": "Workflow State",
+        "name": "Rejected",
+        "doc_status": "1",
+        "is_optional": 0,
+        "state": "Rejected",
+        "workflow_state_name": "Rejected"
+    }
+]

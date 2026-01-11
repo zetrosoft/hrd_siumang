@@ -1,0 +1,84 @@
+
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:nama_pekerjaan",
+ "creation": "2026-01-10 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "nama_pekerjaan",
+  "satuan",
+  "harga_per_satuan",
+  "deskripsi"
+ ],
+ "fields": [
+  {
+   "fieldname": "nama_pekerjaan",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nama Pekerjaan/Produk",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "satuan",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Satuan",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "harga_per_satuan",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Harga per Satuan",
+   "reqd": 1,
+   "default": 0
+  },
+  {
+   "fieldname": "deskripsi",
+   "fieldtype": "Small Text",
+   "label": "Deskripsi"
+  }
+ ],
+ "istable": 0,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-01-10 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Setup Pekerjaan Borongan",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

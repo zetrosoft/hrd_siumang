@@ -1,19 +1,71 @@
+
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-11-26 09:25:00.000000",
+ "autoname": "naming_series:",
+ "creation": "2022-08-29 19:00:53.358248",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "designation",
   "department",
   "no_of_positions",
-  "job_description"
+  "column_break_1",
+  "status",
+  "workflow_state",
+  "company",
+  "details_tab",
+  "job_info_section",
+  "level_posisi",
+  "status_karyawan",
+  "jenis_permintaan",
+  "column_break_2",
+  "expected_compensation",
+  "kualifikasi_section",
+  "col_kualifikasi_1",
+  "pendidikan",
+  "jenis_kelamin",
+  "status_pernikahan",
+  "col_kualifikasi_2",
+  "usia_min",
+  "usia_maks",
+  "tahun_pengalaman",
+  "keahlian_section",
+  "bahasa_asing",
+  "lain_lain",
+  "reason_for_requesting",
+  "timeline_requester_section",
+  "timeline_col_1",
+  "posting_date",
+  "expected_by",
+  "timeline_col_2",
+  "completed_on",
+  "time_to_fill",
+  "requester_col_1",
+  "requested_by",
+  "requested_by_name",
+  "requester_col_2",
+  "requested_by_dept",
+  "requested_by_designation",
+  "job_description_tab",
+  "description",
+  "approval_history_tab",
+  "approval_history"
  ],
  "fields": [
   {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "HR-HIREQ-",
+   "default": "HR-HIREQ-",
+   "reqd": 1
+  },
+  {
    "fieldname": "designation",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Designation",
    "options": "Designation",
    "reqd": 1
@@ -22,28 +74,277 @@
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
-   "options": "Department",
-   "reqd": 1
+   "options": "Department"
   },
   {
    "fieldname": "no_of_positions",
    "fieldtype": "Int",
-   "label": "Number of Positions",
+   "in_list_view": 1,
+   "label": "No of. Positions",
    "reqd": 1
   },
   {
-   "fieldname": "job_description",
-   "fieldtype": "Text Editor",
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nOpen & Approved\nRejected\nFilled\nOn Hold\nCancelled",
+   "default": "Pending",
+   "reqd": 1
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "label": "Workflow State",
+   "read_only": 1,
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Request Details"
+  },
+  {
+   "fieldname": "job_info_section",
+   "fieldtype": "Section Break",
+   "label": "Job Information"
+  },
+  {
+    "fieldname": "level_posisi",
+    "fieldtype": "Select",
+    "label": "Position Level",
+    "options": "\nOperator\nStaff\nSupervisor\nManager\nSenior Manager\nDirektur",
+    "reqd": 1
+   },
+   {
+    "fieldname": "status_karyawan",
+    "fieldtype": "Select",
+    "label": "Employee Status",
+    "options": "\nTetap\nKontrak\nHarian Lepas\nBorongan",
+    "reqd": 1
+   },
+   {
+    "fieldname": "jenis_permintaan",
+    "label": "Request Type",
+    "fieldtype": "Select",
+    "options": "Replacement\nTambahan",
+    "reqd": 1,
+    "description": "Choose if this is a replacement or a new position."
+   },
+   {
+    "fieldname": "column_break_2",
+    "fieldtype": "Column Break"
+   },
+   {
+    "fieldname": "expected_compensation",
+    "fieldtype": "Currency",
+    "label": "Expected Compensation",
+    "options": "Company:company:default_currency",
+    "hidden": 1
+   },
+  {
+   "fieldname": "kualifikasi_section",
+   "fieldtype": "Section Break",
+   "label": "Candidate Qualifications"
+  },
+  {
+    "fieldname": "col_kualifikasi_1",
+    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pendidikan",
+   "fieldtype": "Select",
+   "label": "Education",
+   "options": "\nSMA\nD3\nS1\nS2\nLainnya",
+   "reqd": 1
+  },
+  {
+   "fieldname": "jenis_kelamin",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Pria\nWanita\nTidak Dispesifikasikan",
+   "reqd": 1
+  },
+  {
+    "fieldname": "status_pernikahan",
+    "fieldtype": "Select",
+    "label": "Marital Status",
+    "options": "Lajang\nKawin\nTidak Dipersyaratkan",
+    "reqd": 1
+  },
+  {
+    "fieldname": "col_kualifikasi_2",
+    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "usia_min",
+   "label": "Min. Age",
+   "fieldtype": "Int",
+   "reqd": 1
+  },
+  {
+   "fieldname": "usia_maks",
+   "label": "Max. Age",
+   "fieldtype": "Int",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tahun_pengalaman",
+   "label": "Years of Experience",
+   "fieldtype": "Int",
+   "reqd": 1
+  },
+  {
+    "fieldname": "keahlian_section",
+    "fieldtype": "Section Break",
+    "label": "Skills & Other Info"
+  },
+  {
+    "fieldname": "bahasa_asing",
+    "fieldtype": "Data",
+    "label": "Foreign Language"
+  },
+  {
+    "fieldname": "lain_lain",
+    "fieldtype": "Data",
+    "label": "Others"
+  },
+  {
+    "fieldname": "reason_for_requesting",
+    "fieldtype": "Text",
+    "label": "Reason for Requesting"
+   },
+  {
+    "fieldname": "timeline_requester_section",
+    "fieldtype": "Section Break",
+    "label": "Timeline & Requester"
+   },
+   {
+    "fieldname": "timeline_col_1",
+    "fieldtype": "Column Break"
+   },
+   {
+    "default": "Today",
+    "fieldname": "posting_date",
+    "fieldtype": "Date",
+    "label": "Posting Date",
+    "reqd": 1
+   },
+   {
+    "fieldname": "expected_by",
+    "fieldtype": "Date",
+    "in_list_view": 1,
+    "label": "Expected By"
+   },
+   {
+    "fieldname": "timeline_col_2",
+    "fieldtype": "Column Break"
+   },
+   {
+    "depends_on": "eval:doc.status==\"Filled\"",
+    "fieldname": "completed_on",
+    "fieldtype": "Date",
+    "label": "Completed On",
+    "mandatory_depends_on": "eval:doc.status==\"Filled\""
+   },
+   {
+    "description": "Time taken to fill the open positions",
+    "fieldname": "time_to_fill",
+    "fieldtype": "Duration",
+    "hide_seconds": 1,
+    "label": "Time to Fill",
+    "read_only": 1
+   },
+   {
+    "fieldname": "requester_col_1",
+    "fieldtype": "Column Break"
+   },
+   {
+    "fieldname": "requested_by",
+    "fieldtype": "Link",
+    "in_standard_filter": 1,
+    "label": "Requested By (Employee)",
+    "options": "Employee",
+    "reqd": 1
+   },
+   {
+    "fetch_from": "requested_by.employee_name",
+    "fieldname": "requested_by_name",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Requester Name",
+    "read_only": 1
+   },
+   {
+    "fieldname": "requester_col_2",
+    "fieldtype": "Column Break"
+   },
+   {
+    "fetch_from": "requested_by.department",
+    "fieldname": "requested_by_dept",
+    "fieldtype": "Link",
+    "label": "Requester Department",
+    "options": "Department",
+    "read_only": 1
+   },
+   {
+    "fetch_from": "requested_by.designation",
+    "fieldname": "requested_by_designation",
+    "fieldtype": "Link",
+    "label": "Requester Designation",
+    "options": "Designation",
+    "read_only": 1
+   },
+  {
+   "fieldname": "job_description_tab",
+   "fieldtype": "Tab Break",
    "label": "Job Description"
+  },
+  {
+   "fetch_from": "designation.description",
+   "fetch_if_empty": 1,
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Job Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "approval_history_tab",
+   "fieldtype": "Tab Break",
+   "label": "Approval History"
+  },
+  {
+   "fieldname": "approval_history",
+   "fieldtype": "Table",
+   "label": "Approval History",
+   "options": "Approval History Log",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "issingle": 0,
- "links": [],
- "modified": "2025-11-26 09:25:00.000000",
+ "links": [
+  {
+   "link_doctype": "Job Opening",
+   "link_fieldname": "job_requisition"
+  }
+ ],
+ "modified": "2026-01-09 13:10:00.000000",
  "modified_by": "Administrator",
- "module": "hrd_siumang",
+ "module": "HR",
  "name": "Job Requisition",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -59,7 +360,8 @@
    "write": 1
   }
  ],
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "designation"
 }

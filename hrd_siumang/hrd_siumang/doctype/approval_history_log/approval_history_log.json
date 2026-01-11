@@ -1,0 +1,66 @@
+
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-09 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "state",
+  "owner",
+  "approval_by",
+  "approval_date",
+  "notification_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "State",
+   "read_only": 1
+  },
+  {
+    "fieldname": "owner",
+    "fieldtype": "Link",
+    "options": "User",
+    "in_list_view": 1,
+    "label": "Document Owner",
+    "read_only": 1
+   },
+  {
+   "fieldname": "approval_by",
+   "fieldtype": "Link",
+   "options": "User",
+   "in_list_view": 1,
+   "label": "Approval By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Approval Date",
+   "read_only": 1
+  },
+  {
+    "fieldname": "notification_status",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Notification",
+    "read_only": 1
+   }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-09 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Approval History Log",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

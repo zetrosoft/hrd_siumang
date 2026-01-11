@@ -1,0 +1,22 @@
+[
+    {
+        "doctype": "Property Setter",
+        "name": "Job Requisition-approval_history_tab-hidden",
+        "doc_type": "Job Requisition",
+        "fieldname": "approval_history_tab",
+        "property": "hidden",
+        "value": "0",
+        "property_type": "Check",
+        "doctype_or_field": "DocField"
+    },
+    {
+        "doctype": "Property Setter",
+        "name": "Job Requisition-approval_history-hidden",
+        "doc_type": "Job Requisition",
+        "fieldname": "approval_history",
+        "property": "hidden",
+        "value": "0",
+        "property_type": "Check",
+        "doctype_or_field": "DocField"
+    }
+]

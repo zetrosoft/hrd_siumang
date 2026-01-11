@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-01-10 13:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tipe_penerima_tugas",
+  "link_doctype",
+  "karyawan",
+  "jumlah_dihasilkan",
+  "harga_item",
+  "total_harga_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "tipe_penerima_tugas",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipe Penerima Tugas",
+   "options": "\nIndividu\nTim",
+   "reqd": 1
+  },
+  {
+   "fieldname": "link_doctype",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Link Doctype"
+  },
+  {
+   "fieldname": "karyawan",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Karyawan",
+   "options": "link_doctype"
+  },
+  {
+   "default": "0",
+   "fieldname": "jumlah_dihasilkan",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Jumlah Dihasilkan",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "harga_item",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Harga per Item",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_harga_item",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Harga Item",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-11 21:14:29.541972",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Detail Hasil Borongan",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "idx",
+ "sort_order": "ASC",
+ "states": []
+}

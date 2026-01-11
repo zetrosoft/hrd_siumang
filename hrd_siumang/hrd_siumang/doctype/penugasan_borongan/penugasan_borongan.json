@@ -1,0 +1,107 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PB-{YY}{MM}-{#####}",
+ "creation": "2026-01-10 11:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tipe_penerima_tugas",
+  "karyawan",
+  "tim_borongan",
+  "pekerjaan_borongan",
+  "harga_spesifik_per_satuan",
+  "berlaku_dari",
+  "berlaku_sampai"
+ ],
+ "fields": [
+  {
+   "fieldname": "tipe_penerima_tugas",
+   "fieldtype": "Select",
+   "label": "Tipe Penerima Tugas",
+   "options": "Individu\nTim",
+   "reqd": 1,
+   "default": "Individu"
+  },
+  {
+   "fieldname": "karyawan",
+   "fieldtype": "Link",
+   "label": "Karyawan",
+   "options": "Employee",
+   "depends_on": "eval:doc.tipe_penerima_tugas=='Individu'",
+   "reqd": "eval:doc.tipe_penerima_tugas=='Individu'",
+   "get_query": "hrd_siumang.hrd_siumang.doctype.penugasan_borongan.penugasan_borongan.employee_query"
+  },
+  {
+   "fieldname": "tim_borongan",
+   "fieldtype": "Link",
+   "label": "Tim Borongan",
+   "options": "Tim Borongan",
+   "depends_on": "eval:doc.tipe_penerima_tugas=='Tim'",
+   "reqd": "eval:doc.tipe_penerima_tugas=='Tim'"
+  },
+  {
+   "fieldname": "pekerjaan_borongan",
+   "fieldtype": "Link",
+   "label": "Pekerjaan Borongan",
+   "options": "Setup Pekerjaan Borongan",
+   "reqd": 1
+  },
+  {
+   "fieldname": "harga_spesifik_per_satuan",
+   "fieldtype": "Currency",
+   "label": "Harga Spesifik per Satuan",
+   "description": "Biarkan kosong untuk menggunakan harga dari Setup Pekerjaan Borongan."
+  },
+  {
+   "fieldname": "berlaku_dari",
+   "fieldtype": "Date",
+   "label": "Berlaku Dari",
+   "reqd": 1
+  },
+  {
+   "fieldname": "berlaku_sampai",
+   "fieldtype": "Date",
+   "label": "Berlaku Sampai",
+   "reqd": 1
+  }
+ ],
+ "istable": 0,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-01-10 11:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Penugasan Borongan",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,11 @@
+
+[
+    {
+        "doctype": "Property Setter",
+        "doc_type": "Job Requisition",
+        "fieldname": "expected_compensation",
+        "property": "hidden",
+        "value": "1",
+        "property_type": "Check"
+    }
+]

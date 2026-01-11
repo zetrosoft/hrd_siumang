@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:IHB-{YY}{MM}-{#####}",
+ "creation": "2026-01-10 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tanggal",
+  "pekerjaan_borongan",
+  "harga_per_satuan",
+  "satuan",
+  "summary_total_dihasilkan",
+  "summary_grand_total_harga",
+  "detail_hasil_borongan_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "tanggal",
+   "fieldtype": "Date",
+   "label": "Tanggal",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "pekerjaan_borongan",
+   "fieldtype": "Link",
+   "label": "Pekerjaan Borongan",
+   "options": "Setup Pekerjaan Borongan",
+   "reqd": 1
+  },
+  {
+   "fieldname": "harga_per_satuan",
+   "fieldtype": "Currency",
+   "label": "Harga per Satuan",
+   "default": 0
+  },
+  {
+   "fieldname": "satuan",
+   "fieldtype": "Link",
+   "label": "Satuan",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "summary_total_dihasilkan",
+   "fieldtype": "Float",
+   "label": "Summary Total Dihasilkan",
+   "read_only": 1,
+   "default": 0
+  },
+  {
+   "fieldname": "summary_grand_total_harga",
+   "fieldtype": "Currency",
+   "label": "Summary Grand Total Harga",
+   "read_only": 1,
+   "default": 0
+  },
+  {
+   "fieldname": "detail_hasil_borongan_table",
+   "fieldtype": "Table",
+   "label": "Detail Hasil Borongan",
+   "options": "Detail Hasil Borongan"
+  }
+ ],
+ "istable": 0,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-01-10 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "hrd_siumang",
+ "name": "Input Hasil Borongan",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

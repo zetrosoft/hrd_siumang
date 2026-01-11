@@ -1,17 +1,131 @@
 import frappe
 from frappe import _
-from frappe.query_builder import Order  # Add this import
+from frappe.query_builder import Order
 from frappe.utils import getdate
 
 from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph21
+
+
+def _calculate_borongan_for_employee(employee, start_date, end_date):
+	"""Helper function to calculate total piecework earnings for a single employee."""
+	total_earnings = 0
+
+	# --- 1. Get Individual Earnings ---
+	individual_earnings = frappe.db.sql(
+		"""
+		SELECT SUM(d.total_harga_item)
+		FROM `tabDetail Hasil Borongan` d
+		JOIN `tabInput Hasil Borongan` p ON d.parent = p.name
+		WHERE d.tipe_penerima_tugas = 'Individu'
+		AND d.karyawan = %(employee)s
+		AND p.docstatus = 1
+		AND p.tanggal BETWEEN %(start_date)s AND %(end_date)s
+	""",
+		{"employee": employee, "start_date": start_date, "end_date": end_date},
+	)
+	if individual_earnings and individual_earnings[0][0]:
+		total_earnings += individual_earnings[0][0]
+
+	# --- 2. Get Team Earnings ---
+	# Find all teams the employee is a member of
+	member_of_teams = frappe.get_all("Anggota Tim Borongan", filters={"karyawan": employee}, pluck="parent")
+
+	if not member_of_teams:
+		return total_earnings
+
+	# Get all team-based work within the period
+	team_based_work = frappe.get_all(
+		"Detail Hasil Borongan",
+		fields=["parent", "karyawan", "total_harga_item"],
+		filters={
+			"tipe_penerima_tugas": "Tim",
+			"karyawan": ["in", member_of_teams],
+			"parenttype": "Input Hasil Borongan",
+		},
+	)
+
+	if not team_based_work:
+		return total_earnings
+
+	# Pre-fetch parent dates
+	parent_docs = frappe.get_all(
+		"Input Hasil Borongan",
+		filters={
+			"name": ("in", [d.parent for d in team_based_work]),
+			"docstatus": 1,
+			"tanggal": ("between", [start_date, end_date]),
+		},
+		fields=["name", "tanggal"],
+	)
+	valid_parents = {doc.name: doc.tanggal for doc in parent_docs}
+
+	# Pre-fetch team member counts
+	team_member_counts = {}
+	for team_name in member_of_teams:
+		count = frappe.db.count("Anggota Tim Borongan", {"parent": team_name, "parenttype": "Tim Borongan"})
+		team_member_counts[team_name] = count if count > 0 else 1
+
+	for work in team_based_work:
+		if work.parent in valid_parents:
+			team_name = work.karyawan
+			num_members = team_member_counts.get(team_name, 1)
+			employee_share = work.total_harga_item / num_members
+			total_earnings += employee_share
+
+	return total_earnings
 
 
 def calculate_payroll_components(doc, method):
 	"""
 	DocEvent for Salary Slip before_save.
 	Calculates all salary components based on custom logic defined in hrd_siumang app.
-	This now includes finding the appropriate salary structure if it's not already set.
+	This now includes a special path for 'Struktur Gaji - Harian'.
 	"""
+	# --- Special Path for Daily/Borongan Workers ---
+	if doc.salary_structure == "Struktur Gaji - Harian":
+		# Calculate total borongan earnings for the period
+		total_borongan = _calculate_borongan_for_employee(doc.employee, doc.start_date, doc.end_date)
+
+		new_earnings = []
+		new_deductions = []
+
+		salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
+
+		# Populate earnings, but override Gaji Pokok and zero out others
+		for comp_row in salary_structure_doc.earnings:
+			amount = 0
+			if comp_row.salary_component == "Gaji Pokok":
+				amount = total_borongan
+
+			new_earnings.append(
+				{
+					"doctype": "Salary Detail",
+					"salary_component": comp_row.salary_component,
+					"amount": amount,
+				}
+			)
+
+		# Populate deductions and zero them out
+		for comp_row in salary_structure_doc.deductions:
+			new_deductions.append(
+				{
+					"doctype": "Salary Detail",
+					"salary_component": comp_row.salary_component,
+					"amount": 0,
+				}
+			)
+
+		doc.set("earnings", new_earnings)
+		doc.set("deductions", new_deductions)
+
+		# Recalculate final amounts
+		doc.gross_pay = total_borongan
+		doc.total_deduction = 0
+		doc.net_pay = total_borongan
+
+		return  # IMPORTANT: Stop execution to prevent regular calculation from running
+
+	# --- Regular Monthly Calculation Logic (Original Code) ---
 	# Guard clause to prevent recalculation on submitted documents
 	if doc.docstatus > 0 or doc.get("__submitting") or doc.flags.in_submit:
 		return
@@ -40,7 +154,7 @@ def calculate_payroll_components(doc, method):
 						| (ssa.from_date <= joining_date if joining_date else getdate())
 					)
 				)
-				.orderby(ssa.from_date, order=Order.desc)  # Use the directly imported Order
+				.orderby(ssa.from_date, order=Order.desc)
 				.limit(1)
 			)
 
