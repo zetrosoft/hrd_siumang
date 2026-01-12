@@ -8,6 +8,7 @@
  "field_order": [
   "overtime_date",
   "department",
+  "overtime_approver",
   "overtime_details",
   "amended_from"
  ],
@@ -24,6 +25,13 @@
    "fieldtype": "Link",
    "label": "Department",
    "options": "Department"
+  },
+  {
+   "fieldname": "overtime_approver",
+   "fieldtype": "Link",
+   "label": "Overtime Approver",
+   "options": "User",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,

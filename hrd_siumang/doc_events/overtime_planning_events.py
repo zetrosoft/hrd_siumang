@@ -122,7 +122,7 @@ def on_update_or_submit(doc, method):
 
 
 def create_notification_log(doc, subject, message, for_user):
-	"""Membuat notifikasi lonceng (Notification Log)."""
+	"""Membuat notifikasi lonceng (Notification Log) tanpa mengirim email."""
 	if not for_user or not frappe.db.exists("User", for_user):
 		return
 
@@ -130,15 +130,16 @@ def create_notification_log(doc, subject, message, for_user):
 		{
 			"doctype": "Notification Log",
 			"subject": subject,
-			"email_content": message,
+			"type": "Alert",
+			"channel": "System Notification",
 			"document_type": doc.doctype,
 			"document_name": doc.name,
 			"for_user": for_user,
-			"attached_to_doctype": doc.doctype,  # Untuk link langsung
+			"attached_to_doctype": doc.doctype,
 			"attached_to_name": doc.name,
 		}
 	).insert(ignore_permissions=True)
-	frappe.db.commit()  # Penting agar notifikasi langsung tersimpan
+	frappe.db.commit()
 
 
 def get_users_with_role(role_name):

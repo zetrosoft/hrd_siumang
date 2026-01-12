@@ -3,12 +3,6 @@
 
 frappe.ui.form.on("Job Requisition", {
 	refresh: function (frm) {
-		console.log("HRD Siumang DEBUG: job_requisition_workflow.js refresh event triggered.");
-		console.log("HRD Siumang DEBUG: Current User:", frappe.session.user);
-		console.log("HRD Siumang DEBUG: Document Department:", frm.doc.department);
-		console.log("HRD Siumang DEBUG: Document Workflow State:", frm.doc.workflow_state);
-		console.log("HRD Siumang DEBUG: Is New Document:", frm.is_new());
-
 		// --- Start: Standard HRMS Job Requisition Client Script Logic ---
 		// This section is copied from hrms/hrms/hr/doctype/job_requisition/job_requisition.js
 
@@ -97,9 +91,6 @@ frappe.ui.form.on("Job Requisition", {
 		if (frm.doc.workflow_state === "Pending Manager Approval" && !frm.is_new()) {
 			// If the current user is Administrator, assume full permission.
 			if (frappe.session.user === "Administrator") {
-				console.log(
-					"HRD Siumang DEBUG: User is Administrator, assuming full workflow permission."
-				);
 				frm.refresh_workflow_actions();
 			} else {
 				// Call the whitelisted server method to check if the current user
@@ -111,14 +102,8 @@ frappe.ui.form.on("Job Requisition", {
 					},
 					callback: function (r) {
 						if (r.message) {
-							console.log(
-								"HRD Siumang DEBUG: User is authorized manager, showing workflow actions."
-							);
 							frm.refresh_workflow_actions();
 						} else {
-							console.log(
-								"HRD Siumang DEBUG: User is NOT authorized manager, hiding workflow actions."
-							);
 							frm.page.clear_actions_menu();
 							frm.page.actions_menu.empty(); // Ensure workflow actions are also cleared
 						}
@@ -137,7 +122,6 @@ frappe.ui.form.on("Job Requisition", {
 		// This is moved to the end to run after other scripts might have hidden it.
 		frm.toggle_tab_break("approval_history_tab", true); // Ensure the Tab Break is visible
 		frm.toggle_display("approval_history", true); // Ensure the Table field within the tab is visible
-		console.log("HRD Siumang DEBUG: Forcing 'Approval History' tab and field to be visible.");
 		// --- End: AGGRESSIVE Logic ---
 	},
 });

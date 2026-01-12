@@ -30,19 +30,17 @@ fixtures = [
 	"Tim Borongan",
 	"Anggota Tim Borongan",  # Child Table
 	"Penugasan Borongan",
-	"Laporan Borongan Karyawan",  # Menambahkan report ke fixtures
 ]
 
 doctype_js = {
-	"Job Requisition": "js/job_requisition_workflow.js",
+	"Job Requisition": "public/js/job_requisition_workflow.js",
 	"Overtime Planning": "hrd_siumang/hrd_siumang/doctype/overtime_planning/overtime_planning.js",
 	"Payroll Validation Process": "hrd_siumang/hrd_siumang/doctype/payroll_validation_process/payroll_validation_process.js",
 	"Validasi Kesiapan Payroll": "hrd_siumang/hrd_siumang/doctype/validasi_kesiapan_payroll/validasi_kesiapan_payroll.js",
 	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",
-	"Input Hasil Borongan": "js/input_hasil_borongan.js",
-	"Detail Hasil Borongan": "js/detail_hasil_borongan.js",
+	"Input Hasil Borongan": "public/js/input_hasil_borongan.js",
 }
-doctype_list_js = {"Overtime Planning": "hrd_siumang/public/js/overtime_planning_list.js"}
+doctype_list_js = {"Overtime Planning": "public/js/overtime_planning_list.js"}
 
 doc_events = {
 	"Job Requisition": {"on_update": "hrd_siumang.doc_events.job_requisition_events.on_update"},
@@ -62,7 +60,7 @@ scheduler_events = {
 # patches = ["hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll.execute"]
 
 # javascript files to be included in header of desk.html
-app_include_js = [
-	"/assets/hrd_siumang/js/input_hasil_borongan.js",
-	"/assets/hrd_siumang/js/detail_hasil_borongan.js",
-]
+# app_include_js = [
+# 	"/assets/hrd_siumang/js/input_hasil_borongan.js",
+# 	"/assets/hrd_siumang/js/detail_hasil_borongan.js",
+# ]
