@@ -22,23 +22,13 @@ def execute():
 				"label": "Management Borongan",
 				"hidden": 0,
 				"is_query_report": 0,
-				"link_count": 4,  # Jumlah DocType Borongan
+				"link_count": 3,  # Jumlah DocType Borongan
 				"onboard": 0,
 			},
 			{
 				"type": "Link",
 				"label": "Input Hasil Borongan",
 				"link_to": "Input Hasil Borongan",
-				"link_type": "DocType",
-				"hidden": 0,
-				"is_query_report": 0,
-				"onboard": 0,
-				"is_sub_module": 0,
-			},
-			{
-				"type": "Link",
-				"label": "Penugasan Borongan",
-				"link_to": "Penugasan Borongan",
 				"link_type": "DocType",
 				"hidden": 0,
 				"is_query_report": 0,
