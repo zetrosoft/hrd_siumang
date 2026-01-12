@@ -8,7 +8,7 @@ frappe.ui.form.on("Input Hasil Borongan", {
 
 		console.log("DEBUG: Setting up 'karyawan' query on parent refresh.");
 		frm.set_query("karyawan", "detail_hasil_borongan_table", function (doc, cdt, cdn) {
-			console.log("DEBUG: Main query function is executing for a row.");
+			//console.log("DEBUG: Main query function is executing for a row.");
 			let d = locals[cdt][cdn];
 			if (d.tipe_penerima_tugas === "Individu") {
 				return {
@@ -65,7 +65,7 @@ frappe.ui.form.on("Detail Hasil Borongan", {
 		frm.call("calculate_summary_totals");
 	},
 	detail_hasil_borongan_table_remove: function (frm) {
-		console.log("DEBUG: Event 'detail_hasil_borongan_table_remove' fired.");
+		//console.log("DEBUG: Event 'detail_hasil_borongan_table_remove' fired.");
 		frm.call("calculate_summary_totals");
 	},
 });
