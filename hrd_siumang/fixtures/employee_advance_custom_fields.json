@@ -1,0 +1,14 @@
+[
+    {
+        "doctype": "Custom Field",
+        "dt": "Employee Advance",
+        "fieldname": "expense_approver",
+        "fieldtype": "Link",
+        "options": "User",
+        "label": "Advance Approver",
+        "insert_after": "department",
+        "reqd": 1,
+        "name": "Employee Advance-expense_approver",
+        "module": "hrd_siumang"
+    }
+]

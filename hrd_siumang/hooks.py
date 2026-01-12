@@ -7,8 +7,8 @@ app_license = "mit"
 
 override_doctype_class = {
 	"Job Requisition": "hrd_siumang.overrides.custom_job_requisition.CustomJobRequisition",
-	"Salary Slip": "hrd_siumang.overrides.custom_salary_slip.CustomSalarySlip",
-	"Payroll Entry": "hrd_siumang.overrides.custom_payroll_entry.CustomPayrollEntry",
+	"Salary Slip": "hrd_siumang.hrd_siumang.overrides.custom_salary_slip.CustomSalarySlip",
+	"Payroll Entry": "hrd_siumang.hrd_siumang.overrides.custom_payroll_entry.CustomPayrollEntry",
 }
 
 fixtures = [
@@ -30,6 +30,8 @@ fixtures = [
 	"Tim Borongan",
 	"Anggota Tim Borongan",  # Child Table
 	"Penugasan Borongan",
+	"employee_advance_workflow.json",
+	"employee_advance_custom_fields.json",
 ]
 
 doctype_js = {
@@ -40,15 +42,23 @@ doctype_js = {
 	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",
 	"Input Hasil Borongan": "public/js/input_hasil_borongan.js",
 	"Tim Borongan": "public/js/tim_borongan.js",
+	"Employee Advance": "public/js/employee_advance_client.js",
 }
 doctype_list_js = {"Overtime Planning": "public/js/overtime_planning_list.js"}
 
 doc_events = {
-	"Job Requisition": {"on_update": "hrd_siumang.doc_events.job_requisition_events.on_update"},
-	"Overtime Planning": {"on_update": "hrd_siumang.doc_events.overtime_planning_events.on_update_or_submit"},
-	"Salary Slip": {"before_save": "hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"},
+	"Job Requisition": {"on_update": "hrd_siumang.hrd_siumang.doc_events.job_requisition_events.on_update"},
+	"Overtime Planning": {
+		"on_update": "hrd_siumang.hrd_siumang.doc_events.overtime_planning_events.on_update_or_submit"
+	},
+	"Employee Advance": {
+		"on_update": "hrd_siumang.hrd_siumang.doc_events.employee_advance_events.send_notification_on_state_change"
+	},
+	"Salary Slip": {
+		"before_save": "hrd_siumang.hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"
+	},
 	"Salary Structure Assignment": {
-		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
+		"before_save": "hrd_siumang.hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
 	},
 }
 

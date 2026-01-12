@@ -1,7 +1,7 @@
-from frappe.model.document import Document
+from hrms.hr.doctype.job_requisition.job_requisition import JobRequisition as StandardJobRequisition
 
 
-class CustomJobRequisition(Document):
+class CustomJobRequisition(StandardJobRequisition):
 	"""
 	This class overrides the standard Job Requisition DocType controller.
 	By mapping this class in hooks.py, we are telling the Frappe framework
