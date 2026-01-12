@@ -39,6 +39,7 @@ doctype_js = {
 	"Validasi Kesiapan Payroll": "hrd_siumang/hrd_siumang/doctype/validasi_kesiapan_payroll/validasi_kesiapan_payroll.js",
 	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",
 	"Input Hasil Borongan": "public/js/input_hasil_borongan.js",
+	"Tim Borongan": "public/js/tim_borongan.js",
 }
 doctype_list_js = {"Overtime Planning": "public/js/overtime_planning_list.js"}
 

@@ -16,8 +16,7 @@
    "in_list_view": 1,
    "label": "Karyawan",
    "options": "Employee",
-   "reqd": 1,
-   "get_query": "hrd_siumang.hrd_siumang.doctype.anggota_tim_borongan.anggota_tim_borongan.employee_query"
+   "reqd": 1
   },
   {
    "fetch_from": "karyawan.employee_name",
