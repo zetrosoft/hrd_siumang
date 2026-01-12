@@ -59,8 +59,9 @@ scheduler_events = {
 	]
 }
 
-patches = ["hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll.execute"]
+# patches = ["hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll.execute"]
 
+# javascript files to be included in header of desk.html
 app_include_js = [
 	"/assets/hrd_siumang/js/input_hasil_borongan.js",
 	"/assets/hrd_siumang/js/detail_hasil_borongan.js",
