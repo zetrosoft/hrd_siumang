@@ -34,13 +34,13 @@ fixtures = [
 ]
 
 doctype_js = {
-	"Job Requisition": "hrd_siumang/public/js/job_requisition_workflow.js",
+	"Job Requisition": "js/job_requisition_workflow.js",
 	"Overtime Planning": "hrd_siumang/hrd_siumang/doctype/overtime_planning/overtime_planning.js",
 	"Payroll Validation Process": "hrd_siumang/hrd_siumang/doctype/payroll_validation_process/payroll_validation_process.js",
 	"Validasi Kesiapan Payroll": "hrd_siumang/hrd_siumang/doctype/validasi_kesiapan_payroll/validasi_kesiapan_payroll.js",
 	"Fingerspot Integration Log": "hrd_siumang/hrd_siumang/doctype/fingerspot_integration_log/fingerspot_integration_log.js",
-	"Input Hasil Borongan": "hrd_siumang/public/js/input_hasil_borongan.js",
-	"Detail Hasil Borongan": "hrd_siumang/public/js/detail_hasil_borongan.js",
+	"Input Hasil Borongan": "js/input_hasil_borongan.js",
+	"Detail Hasil Borongan": "js/detail_hasil_borongan.js",
 }
 doctype_list_js = {"Overtime Planning": "hrd_siumang/public/js/overtime_planning_list.js"}
 
