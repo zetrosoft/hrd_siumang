@@ -9,7 +9,7 @@ override_doctype_class = {
 	"Job Requisition": "hrd_siumang.overrides.custom_job_requisition.CustomJobRequisition",
 	"Salary Slip": "hrd_siumang.overrides.custom_salary_slip.CustomSalarySlip",
 	"Payroll Entry": "hrd_siumang.overrides.custom_payroll_entry.CustomPayrollEntry",
-	"Leave Application": "hrd_siumang.overrides.leave_application.LeaveApplicationCustom",
+	# "Leave Application": "hrd_siumang.overrides.leave_application.LeaveApplicationCustom",
 }
 
 fixtures = [
