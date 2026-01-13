@@ -22,32 +22,19 @@ def is_user_department_manager(department: str) -> bool:
 
 
 def on_update(doc: Document, method: str):
-	frappe.msgprint("DEBUG: on_update hook for Job Requisition triggered.")
 	doc_before_save = doc.get_doc_before_save()
 	if not doc_before_save:
-		frappe.msgprint("DEBUG: doc_before_save is None (likely new doc).")
 		return
 
 	if doc_before_save.workflow_state == doc.workflow_state and not frappe.flags.in_test:
-		frappe.msgprint(
-			f"DEBUG: Workflow state is same ({doc.workflow_state}), not logging history or sending notifications."
-		)
 		return
-
-	frappe.msgprint(
-		f"DEBUG: Workflow state changed from {doc_before_save.workflow_state} to {doc.workflow_state}."
-	)
 
 	# Add to approval history first
 	add_approval_history_log(doc)
-	frappe.msgprint(
-		f"DEBUG: add_approval_history_log called. Current history count: {len(doc.get('approval_history'))}"
-	)
 
 	# --- NOTIFICATIONS ---
 	workflow_state = doc.workflow_state
 	if frappe.flags.in_notification_hook:
-		frappe.msgprint("DEBUG: Already in notification hook, returning.")
 		return
 
 	frappe.flags.in_notification_hook = True
@@ -73,10 +60,6 @@ def add_approval_history_log(doc: Document):
 	acting_user = frappe.session.user
 	approver = doc.owner if not doc.get("approval_history") else acting_user
 
-	frappe.msgprint(
-		f"DEBUG: add_approval_history_log: Appending for state {doc.workflow_state} by {approver}."
-	)
-
 	doc.append(
 		"approval_history",
 		{
@@ -87,7 +70,6 @@ def add_approval_history_log(doc: Document):
 			"notification_status": "Sent",  # Placeholder, as we send notifications right after.
 		},
 	)
-	frappe.msgprint(f"DEBUG: Row appended. Now {len(doc.get('approval_history'))} rows.")
 
 
 # ... (all other functions remain the same)
