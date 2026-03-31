@@ -80,11 +80,11 @@ def execute():
 
 	company_name = "PT. SIUMANG TEMAN SUKSES"
 
-	# Akun-akun yang telah disepakati
-	acc_beban_gaji = "5120.001 - Biaya Gaji Staff & Karyawan Tetap - SIUMANG"
-	acc_beban_tunjangan = "5120.007 - Biaya Gaji & Kesejahteraan Lainnya - SIUMANG"
-	acc_beban_iuran = "5120.004 - Biaya Asuransi Kesehatan Pegawai - SIUMANG"
-	acc_hutang_pajak_bpjs = "2141.000 - Hutang Pajak - SIUMANG"
+	# Akun-akun yang telah disepakati (Disesuaikan dengan COA Siumang yang aktif)
+	acc_beban_gaji = "6-20002 - Beban Gaji Karyawan - SIUMANG"
+	acc_beban_tunjangan = "6-20002 - Beban Gaji Karyawan - SIUMANG"
+	acc_beban_iuran = "6-20003 - BPJS & Asuransi - SIUMANG"
+	acc_hutang_pajak_bpjs = "2-20005 - Utang Pajak - PPh 21 - SIUMANG"
 
 	# Definisi komponen TANPA formula
 	salary_components_data = [
@@ -242,7 +242,7 @@ def execute():
 		print("⚠️  [PERINGATAN] Tidak ada karyawan aktif yang ditemukan untuk perusahaan ini.")
 	else:
 		for emp in employees:
-			ctc = emp.get("ctc", 0)
+			ctc = frappe.utils.flt(emp.get("ctc") or 0)
 			emp_type = emp.get("employment_type")
 			date_of_joining = emp.get("date_of_joining")
 
@@ -253,30 +253,30 @@ def execute():
 			if not date_of_joining:
 				print(f"   [INFO] DILEWATI: {emp.employee_name} tidak memiliki 'Date of Joining'.")
 				continue
-			if emp_type not in created_structures:
-				print(
-					f"   [INFO] DILEWATI: Tidak ditemukan Salary Structure untuk 'Employment Type' '{emp_type}' ({emp.employee_name})."
-				)
+
+			# Cari Struktur Gaji yang sesuai
+			struct_to_assign = f"Struktur Gaji - {emp_type}"
+			if not frappe.db.exists("Salary Structure", struct_to_assign):
+				print(f"   [INFO] DILEWATI: Tidak ditemukan Salary Structure '{struct_to_assign}' ({emp.employee_name}).")
 				continue
 
-			if ctc and frappe.utils.flt(ctc) > 0:
-				struct_to_assign = created_structures[emp_type]
-				try:
-					assignment = frappe.new_doc("Salary Structure Assignment")
-					assignment.employee = emp.name
-					assignment.salary_structure = struct_to_assign
-					assignment.from_date = date_of_joining  # Menggunakan tanggal join
-					assignment.ctc = ctc
-					assignment.company = company_name
-					assignment.insert(ignore_permissions=True)
-					assignment.submit()
-					print(
-						f"   ✅ Berhasil assign '{struct_to_assign}' ke {emp.employee_name} (From: {date_of_joining})"
-					)
-				except Exception as e:
-					print(f"   ❌ GAGAL assign ke {emp.employee_name}: {e}")
-			else:
-				print(f"   [INFO] DILEWATI: {emp.employee_name} karena CTC adalah 0 atau tidak ada.")
+			try:
+				assignment = frappe.new_doc("Salary Structure Assignment")
+				assignment.employee = emp.name
+				assignment.salary_structure = struct_to_assign
+				assignment.from_date = date_of_joining
+				assignment.base_payroll_payable_account = "2-20002 - Utang Gaji - SIUMANG"
+				assignment.payroll_payable_account = "2-20002 - Utang Gaji - SIUMANG"
+				assignment.company = company_name
+				assignment.base = ctc
+				
+				assignment.insert(ignore_permissions=True)
+				assignment.submit()
+				print(
+					f"   ✅ Berhasil assign '{struct_to_assign}' ke {emp.employee_name} (From: {date_of_joining}, Amount: {ctc})"
+				)
+			except Exception as e:
+				print(f"   ❌ GAGAL assign ke {emp.employee_name}: {e}")
 
 	frappe.db.commit()
 	print("✅ FASE 3 Selesai: Assignment struktur gaji selesai.")

@@ -9,7 +9,7 @@ def process_auto_attendance():
     dan menangani error per-record agar tidak menghentikan seluruh proses.
     """
     yesterday = add_days(nowdate(), -1)
-    log = logger("attendance_sync")
+    log = frappe.logger("attendance_sync")
     
     # Ambil data check-in per karyawan per hari yang belum diproses
     try:
@@ -71,7 +71,7 @@ def process_auto_attendance():
                 if entry.in_time != entry.out_time:
                     actual_out = get_time(entry.out_time)
                     if actual_out < shift_end:
-                        diff_out = (shift_end.hour * 3600 + shift_end_time.minute * 60) - (actual_out.hour * 3600 + actual_out.minute * 60)
+                        diff_out = (shift_end.hour * 3600 + shift_end.minute * 60) - (actual_out.hour * 3600 + actual_out.minute * 60)
                         if diff_out > (grace_out * 60):
                             early_exit = 1
                             remarks.append(f"Pulang Cepat {diff_out // 60} mnt")
