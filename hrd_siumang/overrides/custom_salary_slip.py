@@ -1,5 +1,6 @@
 import frappe
 from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip
+from sales_monitor.override_payroll import patched_calculate_net_pay
 
 
 class CustomSalarySlip(SalarySlip):
@@ -11,19 +12,35 @@ class CustomSalarySlip(SalarySlip):
 
 	def calculate_net_pay(self, skip_tax_breakup_computation: bool = False):
 		"""
-		This method is intentionally overridden to do nothing.
-		The core `calculate_net_pay` function orchestrates a full recalculation
-		of all components, which overwrites the values correctly calculated
-		by our custom `before_save` hook. By neutralizing this method,
-		we allow our custom app to be the sole source of truth for calculations.
+		This is the primary override point.
+		It checks if the Salary Slip is for an incentive and routes accordingly.
 		"""
-		# We add a log to confirm this patch is working.
-		# This can be viewed from the "Error Log" list in the Frappe UI.
-		frappe.log_error(
-			title="HRD Siumang Override",
-			message=f"Skipping core `calculate_net_pay` for {self.name} via class override.",
-		)
-		pass
+		# Check if this Payroll Entry is linked to an Employee Incentive.
+		# This is the definitive check to identify an incentive-based payroll run.
+		is_incentive_slip = False
+		if self.payroll_entry:
+			is_incentive_pe = frappe.db.get_value(
+				"Payroll Entry", self.payroll_entry, "custom_incentive_employee_incentive"
+			)
+			if is_incentive_pe:
+				is_incentive_slip = True
+
+		if is_incentive_slip:
+			# If it's an incentive slip, we call the specific logic defined in our
+			# sales_monitor patch. This function is designed to handle only incentives.
+			frappe.log_error(
+				title="HRD Siumang Override -> Routing to Sales Monitor",
+				message=f"Detected incentive slip for {self.name}. Routing to patched_calculate_net_pay.",
+			)
+			return patched_calculate_net_pay(self, skip_tax_breakup_computation)
+		else:
+			# If it's a normal payroll run, we intentionally do nothing,
+			# allowing the `before_save` hook in hrd_siumang to handle the calculation.
+			frappe.log_error(
+				title="HRD Siumang Override",
+				message=f"Skipping core `calculate_net_pay` for normal slip {self.name} via class override.",
+			)
+			pass
 
 	def add_tax_components(self):
 		"""
@@ -39,6 +56,7 @@ class CustomSalarySlip(SalarySlip):
 			message=f"Skipping core `add_tax_components` for {self.name} via class override.",
 		)
 		pass
+
 
 	# By NOT overriding the main 'validate' method, we allow the original
 	# `validate` to run. It will perform its setup functions (like get_working_days_details),

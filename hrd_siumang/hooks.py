@@ -65,6 +65,12 @@ doc_events = {
 # 	]
 # }
 
+scheduler_events = {
+	"hourly": [
+		"hrd_siumang.utils.attendance_utils.process_auto_attendance"
+	]
+}
+
 # patches = ["hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll.execute"]
 
 # javascript files to be included in header of desk.html

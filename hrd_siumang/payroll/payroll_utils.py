@@ -11,9 +11,9 @@ def calculate_pph21(doc, method=None):
 	Menghitung PPh 21 bulanan untuk seorang karyawan berdasarkan data pada Salary Slip
 	menggunakan metode Tarif Efektif Rerata (TER).
 	"""
-	frappe.msgprint(
-		f"DEBUG PPH UNCONDITIONAL: calculate_pph21 called for {doc.employee}. frappe.request: {frappe.request}"
-	)
+	# frappe.msgprint(
+	# 	f"DEBUG PPH UNCONDITIONAL: calculate_pph21 called for {doc.employee}. frappe.request: {frappe.request}"
+	# )
 
 	try:
 		# 1. Ambil Data Karyawan
@@ -21,9 +21,9 @@ def calculate_pph21(doc, method=None):
 		status_ptkp = employee.status_pajak
 		total_pendapatan_bruto_bulanan = doc.gross_pay
 
-		frappe.msgprint(f"DEBUG PPH: Karyawan: {employee.name}")
-		frappe.msgprint(f"DEBUG PPH: Status PTKP: {status_ptkp}")
-		frappe.msgprint(f"DEBUG PPH: Total Pendapatan Bruto Bulanan: {total_pendapatan_bruto_bulanan}")
+		# frappe.msgprint(f"DEBUG PPH: Karyawan: {employee.name}")
+		# frappe.msgprint(f"DEBUG PPH: Status PTKP: {status_ptkp}")
+		# frappe.msgprint(f"DEBUG PPH: Total Pendapatan Bruto Bulanan: {total_pendapatan_bruto_bulanan}")
 
 		# 2. Tentukan Kategori TER (ini adalah simplifikasi, bisa diperluas)
 		# Kategori A: TK/0, TK/1, K/0
@@ -35,7 +35,7 @@ def calculate_pph21(doc, method=None):
 			kategori_ter = "C"
 		else:
 			kategori_ter = "A"
-		frappe.msgprint(f"DEBUG PPH: Kategori TER ditentukan: {kategori_ter}")
+		# frappe.msgprint(f"DEBUG PPH: Kategori TER ditentukan: {kategori_ter}")
 
 		# 3. Dapatkan tarif TER dari DocType 'Tarif Efektif Rerata'
 		filters = {
@@ -43,7 +43,7 @@ def calculate_pph21(doc, method=None):
 			"batas_penghasilan_bruto_bulanan_bawah": ["<=", total_pendapatan_bruto_bulanan],
 			"batas_penghasilan_bruto_bulanan_atas": [">=", total_pendapatan_bruto_bulanan],
 		}
-		frappe.msgprint(f"DEBUG PPH: Filter yang digunakan untuk mencari TER: {filters}")
+		# frappe.msgprint(f"DEBUG PPH: Filter yang digunakan untuk mencari TER: {filters}")
 
 		ter_item = frappe.get_list(
 			"Tarif Efektif Rerata",
@@ -55,12 +55,12 @@ def calculate_pph21(doc, method=None):
 			],
 			limit=1,
 		)
-		frappe.msgprint(f"DEBUG PPH: ter_item found: {ter_item}")
+		# frappe.msgprint(f"DEBUG PPH: ter_item found: {ter_item}")
 
 		if not ter_item:
-			frappe.msgprint(
-				f"DEBUG PPH: Tarif TER TIDAK ditemukan untuk Karyawan {employee.name}, Kategori {kategori_ter}, Bruto Bulanan {total_pendapatan_bruto_bulanan}. Mengembalikan 0."
-			)
+			# frappe.msgprint(
+			# 	f"DEBUG PPH: Tarif TER TIDAK ditemukan untuk Karyawan {employee.name}, Kategori {kategori_ter}, Bruto Bulanan {total_pendapatan_bruto_bulanan}. Mengembalikan 0."
+			# )
 			frappe.log_error(
 				f"Tarif TER tidak ditemukan untuk Karyawan {employee.name}, Kategori {kategori_ter}, Bruto Bulanan {total_pendapatan_bruto_bulanan}"
 			)
@@ -68,24 +68,24 @@ def calculate_pph21(doc, method=None):
 
 		ter_rate_percent = ter_item[0].tarif_ter
 		ter_rate = ter_rate_percent / 100
-		frappe.msgprint(f"DEBUG PPH: ter_rate_percent: {ter_rate_percent}, ter_rate: {ter_rate}")
+		# frappe.msgprint(f"DEBUG PPH: ter_rate_percent: {ter_rate_percent}, ter_rate: {ter_rate}")
 
-		frappe.msgprint(f"DEBUG PPH: Tarif TER ditemukan. Persen: {ter_rate_percent}%, Rate: {ter_rate}")
-		frappe.msgprint(
-			f"DEBUG PPH: Rentang TER: Bawah={ter_item[0].batas_penghasilan_bruto_bulanan_bawah}, Atas={ter_item[0].batas_penghasilan_bruto_bulanan_atas}"
-		)
-		frappe.msgprint(f"DEBUG PPH: Menggunakan metode PPh 21 TER dengan tarif: {ter_rate * 100}%")
+		# frappe.msgprint(f"DEBUG PPH: Tarif TER ditemukan. Persen: {ter_rate_percent}%, Rate: {ter_rate}")
+		# frappe.msgprint(
+		# 	f"DEBUG PPH: Rentang TER: Bawah={ter_item[0].batas_penghasilan_bruto_bulanan_bawah}, Atas={ter_item[0].batas_penghasilan_bruto_bulanan_atas}"
+		# )
+		# frappe.msgprint(f"DEBUG PPH: Menggunakan metode PPh 21 TER dengan tarif: {ter_rate * 100}%")
 
 		# 4. Hitung PPh 21 Bulanan
 		pph21_bulanan = total_pendapatan_bruto_bulanan * ter_rate
-		frappe.msgprint(f"DEBUG PPH: pph21_bulanan (raw): {pph21_bulanan}")
+		# frappe.msgprint(f"DEBUG PPH: pph21_bulanan (raw): {pph21_bulanan}")
 
-		frappe.msgprint(f"DEBUG PPH: PPh 21 Bulanan (sebelum pembulatan): {pph21_bulanan}")
+		# frappe.msgprint(f"DEBUG PPH: PPh 21 Bulanan (sebelum pembulatan): {pph21_bulanan}")
 
 		return round(pph21_bulanan)
 
 	except Exception as e:
-		frappe.msgprint(f"DEBUG PPH: Exception caught: {e}")
+		# frappe.msgprint(f"DEBUG PPH: Exception caught: {e}")
 		frappe.log_error(frappe.get_traceback(), "Kalkulasi PPh 21 Gagal")
 		return 0
 

@@ -81,6 +81,16 @@ def calculate_payroll_components(doc, method):
 	Calculates all salary components based on custom logic defined in hrd_siumang app.
 	This now includes a special path for 'Struktur Gaji - Harian'.
 	"""
+	# --- Special Path for Incentive Salary Slips ---
+	# Skip all calculations if this slip is generated from Employee Incentive
+	if getattr(doc, "custom_is_incentive_slip", None):
+		return
+
+	if doc.payroll_entry:
+		is_incentive_pe = frappe.db.get_value("Payroll Entry", doc.payroll_entry, "custom_incentive_employee_incentive")
+		if is_incentive_pe:
+			return
+
 	# --- Special Path for Daily/Borongan Workers ---
 	if doc.salary_structure == "Struktur Gaji - Harian":
 		# Calculate total borongan earnings for the period
