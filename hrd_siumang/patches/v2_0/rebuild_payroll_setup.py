@@ -79,12 +79,17 @@ def execute():
 	print("\n--- FASE 2: PEMBANGUNAN ULANG KONFIGURASI ---")
 
 	company_name = "PT. SIUMANG TEMAN SUKSES"
+	# Akun-akun yang telah disepakati --coa lama
+	acc_beban_gaji = "5120.001 - Biaya Gaji Staff & Karyawan Tetap - SIUMANG"
+	acc_beban_tunjangan = "5120.007 - Biaya Gaji & Kesejahteraan Lainnya - SIUMANG"
+	acc_beban_iuran = "5120.004 - Biaya Asuransi Kesehatan Pegawai - SIUMANG"
+	acc_hutang_pajak_bpjs = "2141.000 - Hutang Pajak - SIUMANG"
 
 	# Akun-akun yang telah disepakati (Disesuaikan dengan COA Siumang yang aktif)
-	acc_beban_gaji = "6-20002 - Beban Gaji Karyawan - SIUMANG"
-	acc_beban_tunjangan = "6-20002 - Beban Gaji Karyawan - SIUMANG"
-	acc_beban_iuran = "6-20003 - BPJS & Asuransi - SIUMANG"
-	acc_hutang_pajak_bpjs = "2-20005 - Utang Pajak - PPh 21 - SIUMANG"
+	#acc_beban_gaji = "6-20002 - Beban Gaji Karyawan - SIUMANG"
+	#acc_beban_tunjangan = "6-20002 - Beban Gaji Karyawan - SIUMANG"
+	#acc_beban_iuran = "6-20003 - BPJS & Asuransi - SIUMANG"
+	#acc_hutang_pajak_bpjs = "2-20005 - Utang Pajak - PPh 21 - SIUMANG"
 
 	# Definisi komponen TANPA formula
 	salary_components_data = [
