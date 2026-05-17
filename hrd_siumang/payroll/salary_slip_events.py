@@ -98,14 +98,91 @@ def calculate_payroll_components(doc, method):
 
 		new_earnings = []
 		new_deductions = []
+		earnings_map = {}
+		deductions_map = {}
 
 		salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
+		
+		# Ambil base_amount dari Salary Structure Assignment untuk perhitungan BPJS
+		base_amount = 0
+		tunjangan_tetap = 0
+		ssa = frappe.get_all("Salary Structure Assignment", filters={"employee": doc.employee, "docstatus": 1}, fields=["name", "base"], limit=1)
+		if ssa:
+			base_amount = ssa[0].base
+			if frappe.db.exists("Employee Allowance Data", {"employee": doc.employee}):
+				ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": doc.employee})
+				tunjangan_tetap = (ea_doc.tunjangan_jabatan or 0) + (ea_doc.tunjangan_komunikasi or 0)
+				
+		bpjs_base = base_amount + tunjangan_tetap
+		
+		# --- Logika BPJS Custom ---
+		bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+		include_bpjs_tk = True
+		include_bpjs_kes = True
+		bpjs_base_tk = bpjs_base
+		bpjs_base_kes = bpjs_base
+		komponen_tk = []
+		komponen_kes = []
 
-		# Populate earnings, but override Gaji Pokok and zero out others
+		if bpjs_setting:
+			komponen_tk = [row.salary_component for row in bpjs_setting.komponen_bpjs_tk]
+			komponen_kes = [row.salary_component for row in bpjs_setting.komponen_bpjs_kes]
+			
+			if hasattr(bpjs_setting, "pengecualian_gaji"):
+				for exc in bpjs_setting.pengecualian_gaji:
+					if exc.employee == doc.employee:
+						if exc.reported_salary:
+							bpjs_base_tk = exc.reported_salary
+							bpjs_base_kes = exc.reported_salary
+						break
+			
+			if hasattr(bpjs_setting, "pengecualian_komponen"):
+				for exc in bpjs_setting.pengecualian_komponen:
+					if exc.employee == doc.employee:
+						include_bpjs_tk = exc.include_bpjs_tk
+						include_bpjs_kes = exc.include_bpjs_kes
+						break
+
+		# KHUSUS HARIAN: Jika total borongan 0, paksa nilai BPJS menjadi 0 secara mutlak 
+		# (meskipun karyawan terdaftar di BPJS Setting)
+		if total_borongan == 0:
+			bpjs_base_tk = 0
+			bpjs_base_kes = 0
+
+		if include_bpjs_tk:
+			earnings_map.update({
+				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
+				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
+				"JKM 0,3%": round(bpjs_base_tk * 0.003),
+				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
+			})
+			deductions_map.update({
+				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
+				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
+				"JKM 0,3%": round(bpjs_base_tk * 0.003),
+				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02),
+				"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
+				"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
+			})
+
+		if include_bpjs_kes:
+			earnings_map.update({
+				"JKN Perusahaan 4%": 0
+			})
+			deductions_map.update({
+				"JKN Perusahaan 4%": 0,
+				"JKN Karyawan 1%": 0
+			})
+
+		# Populate earnings
 		for comp_row in salary_structure_doc.earnings:
 			amount = 0
 			if comp_row.salary_component == "Gaji Pokok":
 				amount = total_borongan
+			elif comp_row.salary_component in earnings_map:
+				# Hanya ambil nilai jika itu adalah komponen BPJS yang diizinkan (nilai > 0 atau secara implisit 0 karena setting)
+				if comp_row.salary_component in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%", "JKN Perusahaan 4%"]:
+					amount = earnings_map[comp_row.salary_component]
 
 			new_earnings.append(
 				{
@@ -115,13 +192,18 @@ def calculate_payroll_components(doc, method):
 				}
 			)
 
-		# Populate deductions and zero them out
+		# Populate deductions
 		for comp_row in salary_structure_doc.deductions:
+			amount = 0
+			if comp_row.salary_component in deductions_map:
+				if comp_row.salary_component in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%", "JHT Karyawan 2%", "JP Karyawan 1%", "JKN Perusahaan 4%", "JKN Karyawan 1%"]:
+					amount = deductions_map[comp_row.salary_component]
+				
 			new_deductions.append(
 				{
 					"doctype": "Salary Detail",
 					"salary_component": comp_row.salary_component,
-					"amount": 0,
+					"amount": amount,
 				}
 			)
 
@@ -129,9 +211,9 @@ def calculate_payroll_components(doc, method):
 		doc.set("deductions", new_deductions)
 
 		# Recalculate final amounts
-		doc.gross_pay = total_borongan
-		doc.total_deduction = 0
-		doc.net_pay = total_borongan
+		doc.gross_pay = sum(e.get("amount", 0) for e in new_earnings)
+		doc.total_deduction = sum(d.get("amount", 0) for d in new_deductions)
+		doc.net_pay = doc.gross_pay - doc.total_deduction
 
 		return  # IMPORTANT: Stop execution to prevent regular calculation from running
 
@@ -219,27 +301,75 @@ def calculate_payroll_components(doc, method):
 			)
 
 		bpjs_base = base_amount + tunjangan_tetap
-		earnings_map.update(
-			{
-				"JHT Perusahaan 3,7%": round(bpjs_base * 0.037),
-				"JKK 0,89%": round(bpjs_base * 0.0089),
-				"JKM 0,3%": round(bpjs_base * 0.003),
-				"JP Perusahaan 2%": round(bpjs_base * 0.02),
+		
+		# --- Logika BPJS Custom ---
+		bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+		
+		include_bpjs_tk = True
+		include_bpjs_kes = True
+		bpjs_base_tk = bpjs_base
+		bpjs_base_kes = bpjs_base
+		
+		komponen_tk = []
+		komponen_kes = []
+
+		if bpjs_setting:
+			komponen_tk = [row.salary_component for row in bpjs_setting.komponen_bpjs_tk]
+			komponen_kes = [row.salary_component for row in bpjs_setting.komponen_bpjs_kes]
+			
+			# Cek List 1: Pengecualian Gaji (Problem 2 & 3)
+			if hasattr(bpjs_setting, "pengecualian_gaji"):
+				for exc in bpjs_setting.pengecualian_gaji:
+					if exc.employee == doc.employee:
+						if exc.reported_salary:
+							bpjs_base_tk = exc.reported_salary
+							bpjs_base_kes = exc.reported_salary
+						break
+			
+			# Cek List 2: Pengecualian Status BPJS TK/Kes (Problem 4 & 5)
+			# List 2 akan menimpa include_bpjs_tk dan include_bpjs_kes jika karyawan ada di dalam list ini.
+			if hasattr(bpjs_setting, "pengecualian_komponen"):
+				for exc in bpjs_setting.pengecualian_komponen:
+					if exc.employee == doc.employee:
+						include_bpjs_tk = exc.include_bpjs_tk
+						include_bpjs_kes = exc.include_bpjs_kes
+						break
+
+		if include_bpjs_tk:
+			earnings_map.update({
+				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
+				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
+				"JKM 0,3%": round(bpjs_base_tk * 0.003),
+				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
+			})
+			deductions_map.update({
+				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
+				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
+				"JKM 0,3%": round(bpjs_base_tk * 0.003),
+				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02),
+				"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
+				"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
+			})
+		else:
+			for comp in komponen_tk:
+				if comp in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%"]:
+					earnings_map[comp] = 0
+				deductions_map[comp] = 0
+
+		if include_bpjs_kes:
+			earnings_map.update({
+				"JKN Perusahaan 4%": 0
+			})
+			deductions_map.update({
 				"JKN Perusahaan 4%": 0,
-			}
-		)
-		deductions_map.update(
-			{
-				"JHT Perusahaan 3,7%": earnings_map["JHT Perusahaan 3,7%"],
-				"JKK 0,89%": earnings_map["JKK 0,89%"],
-				"JKM 0,3%": earnings_map["JKM 0,3%"],
-				"JP Perusahaan 2%": earnings_map["JP Perusahaan 2%"],
-				"JKN Perusahaan 4%": earnings_map["JKN Perusahaan 4%"],
-				"JHT Karyawan 2%": round(bpjs_base * 0.02),
-				"JP Karyawan 1%": round(bpjs_base * 0.01),
-				"JKN Karyawan 1%": 0,
-			}
-		)
+				"JKN Karyawan 1%": 0
+			})
+		else:
+			for comp in komponen_kes:
+				if comp in ["JKN Perusahaan 4%"]:
+					earnings_map[comp] = 0
+				deductions_map[comp] = 0
+		# --- Akhir Logika BPJS Custom ---
 
 		earnings_map["Overtime"] = calculate_overtime(doc)
 

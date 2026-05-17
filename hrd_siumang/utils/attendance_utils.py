@@ -8,7 +8,8 @@ def process_auto_attendance():
     Logika: Mengikuti aturan Shift, mencatat Late Entry/Early Exit, 
     dan menangani error per-record agar tidak menghentikan seluruh proses.
     """
-    yesterday = add_days(nowdate(), -1)
+    today = nowdate()
+    print(f"Memproses data check-in sampai tanggal: {today}")
     log = frappe.logger("attendance_sync")
     
     # Ambil data check-in per karyawan per hari yang belum diproses
@@ -23,12 +24,15 @@ def process_auto_attendance():
             WHERE (attendance IS NULL OR attendance = '')
             AND DATE(time) <= %s
             GROUP BY employee, DATE(time)
-        """, (yesterday,), as_dict=True)
+        """, (today,), as_dict=True)
+        print(f"Ditemukan {len(checkins)} kelompok check-in untuk diproses.")
     except Exception as e:
+        print(f"ERROR SQL: {str(e)}")
         log.error(f"Gagal mengambil data check-in: {str(e)}")
         return
 
     if not checkins:
+        print("Tidak ada data check-in baru untuk diproses.")
         return
 
     processed_count = 0
