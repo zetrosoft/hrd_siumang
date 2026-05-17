@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from hrd_siumang.payroll.bpjs_utils import get_employee_bpjs_salary
 
 def execute(filters=None):
     columns, data = [], []
@@ -46,6 +47,14 @@ def get_data(filters):
             {conditions}
     """, as_dict=1)
     
+    # Ambil BPJS Setting untuk mapping pengecualian gaji
+    bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+    pengecualian_map = {}
+    if bpjs_setting and hasattr(bpjs_setting, "pengecualian_gaji"):
+        for exc in bpjs_setting.pengecualian_gaji:
+            if exc.reported_salary:
+                pengecualian_map[exc.employee] = exc.reported_salary
+    
     data = []
     
     for slip in slips:
@@ -54,10 +63,15 @@ def get_data(filters):
             fields=["salary_component", "amount", "parentfield"]
         )
         
+        # Tentukan Gaji Dilaporkan
+        reported_salary = pengecualian_map.get(slip.employee)
+        if not reported_salary:
+            reported_salary = get_employee_bpjs_salary(slip.employee)
+        
         row = {
             "employee": slip.employee,
             "employee_name": slip.employee_name,
-            "reported_salary": 0,
+            "reported_salary": reported_salary,
             "jht_company": 0,
             "jkk": 0,
             "jkm": 0,
@@ -84,14 +98,6 @@ def get_data(filters):
         # Jika slip ini tidak memiliki satupun komponen BPJS, lewati saja
         if row["jht_company"] == 0 and row["jht_employee"] == 0 and row["jkn_company"] == 0 and row["jkn_employee"] == 0:
             continue
-            
-        # Reverse engineer nilai Gaji Dilaporkan
-        if row["jht_company"] > 0:
-            row["reported_salary"] = round(row["jht_company"] / 0.037)
-        elif row["jkk"] > 0:
-            row["reported_salary"] = round(row["jkk"] / 0.0089)
-        elif row["jkn_company"] > 0:
-            row["reported_salary"] = round(row["jkn_company"] / 0.04)
             
         row["total_company"] = row["jht_company"] + row["jkk"] + row["jkm"] + row["jp_company"] + row["jkn_company"]
         row["total_employee"] = row["jht_employee"] + row["jp_employee"] + row["jkn_employee"]
