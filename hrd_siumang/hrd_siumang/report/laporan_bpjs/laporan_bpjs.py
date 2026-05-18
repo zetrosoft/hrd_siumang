@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from hrd_siumang.payroll.bpjs_utils import get_employee_bpjs_salary
 
 def execute(filters=None):
     columns, data = [], []
@@ -28,46 +29,24 @@ def get_columns():
     ]
 
 def get_data(filters):
-    if not filters.get("month") or not filters.get("year"):
-        return []
-
-    # Pastikan filter bulan dan tahun adalah integer
-    month = int(filters.get("month"))
-    year = int(filters.get("year"))
+    conditions = "docstatus = 1"
     
-    conditions = ["ss.docstatus = 1", "MONTH(ss.start_date) = %(month)s", "YEAR(ss.start_date) = %(year)s"]
-    query_args = {"month": month, "year": year}
-
+    if filters.get("month"):
+        conditions += f" AND MONTH(start_date) = '{filters.get('month')}'"
+    if filters.get("year"):
+        conditions += f" AND YEAR(start_date) = '{filters.get('year')}'"
     if filters.get("employee"):
-        conditions.append("ss.employee = %(employee)s")
-        query_args["employee"] = filters.get("employee")
-
-    # Ambil data slip dan rincian komponen BPJS secara spesifik per tabel
-    raw_data = frappe.db.sql(f"""
+        conditions += f" AND employee = '{filters.get('employee')}'"
+        
+    slips = frappe.db.sql(f"""
         SELECT 
-            ss.employee,
-            ss.employee_name,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'Gaji Pokok' THEN sd.amount ELSE 0 END) as base_gaji,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'Tj. Jabatan' THEN sd.amount ELSE 0 END) as base_jabatan,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'Tj. Komunikasi' THEN sd.amount ELSE 0 END) as base_komunikasi,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'JHT Perusahaan 3,7%%' THEN sd.amount ELSE 0 END) as jht_company,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'JKK 0,89%%' THEN sd.amount ELSE 0 END) as jkk,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'JKM 0,3%%' THEN sd.amount ELSE 0 END) as jkm,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'JP Perusahaan 2%%' THEN sd.amount ELSE 0 END) as jp_company,
-            SUM(CASE WHEN sd.parentfield = 'earnings' AND sd.salary_component = 'JKN Perusahaan 4%%' THEN sd.amount ELSE 0 END) as jkn_company,
-            SUM(CASE WHEN sd.parentfield = 'deductions' AND sd.salary_component = 'JHT Karyawan 2%%' THEN sd.amount ELSE 0 END) as jht_employee,
-            SUM(CASE WHEN sd.parentfield = 'deductions' AND sd.salary_component = 'JP Karyawan 1%%' THEN sd.amount ELSE 0 END) as jp_employee,
-            SUM(CASE WHEN sd.parentfield = 'deductions' AND sd.salary_component = 'JKN Karyawan 1%%' THEN sd.amount ELSE 0 END) as jkn_employee
+            name, employee, employee_name
         FROM 
-            `tabSalary Slip` ss
-        JOIN 
-            `tabSalary Detail` sd ON ss.name = sd.parent
+            `tabSalary Slip`
         WHERE 
-            {" AND ".join(conditions)}
-        GROUP BY 
-            ss.employee, ss.employee_name
-    """, query_args, as_dict=1)
-
+            {conditions}
+    """, as_dict=1)
+    
     # Ambil BPJS Setting untuk mapping pengecualian gaji
     bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
     pengecualian_map = {}
@@ -75,20 +54,55 @@ def get_data(filters):
         for exc in bpjs_setting.pengecualian_gaji:
             if exc.reported_salary:
                 pengecualian_map[exc.employee] = exc.reported_salary
-
+    
     data = []
-    for row in raw_data:
-        # Hitung internal base dari slip (Gaji Pokok + Tunjangan Tetap)
-        internal_base = row["base_gaji"] + row["base_jabatan"] + row["base_komunikasi"]
+    
+    for slip in slips:
+        details = frappe.get_all("Salary Detail", 
+            filters={"parent": slip.name, "parenttype": "Salary Slip"},
+            fields=["salary_component", "amount", "parentfield"]
+        )
         
         # Tentukan Gaji Dilaporkan
-        row["reported_salary"] = pengecualian_map.get(row["employee"], internal_base)
+        reported_salary = pengecualian_map.get(slip.employee)
+        if not reported_salary:
+            reported_salary = get_employee_bpjs_salary(slip.employee)
         
+        row = {
+            "employee": slip.employee,
+            "employee_name": slip.employee_name,
+            "reported_salary": reported_salary,
+            "jht_company": 0,
+            "jkk": 0,
+            "jkm": 0,
+            "jp_company": 0,
+            "jkn_company": 0,
+            "jht_employee": 0,
+            "jp_employee": 0,
+            "jkn_employee": 0,
+            "total_company": 0,
+            "total_employee": 0,
+            "total_all": 0
+        }
+        
+        for d in details:
+            if d.salary_component == "JHT Perusahaan 3,7%": row["jht_company"] += d.amount
+            elif d.salary_component == "JKK 0,89%": row["jkk"] += d.amount
+            elif d.salary_component == "JKM 0,3%": row["jkm"] += d.amount
+            elif d.salary_component == "JP Perusahaan 2%": row["jp_company"] += d.amount
+            elif d.salary_component == "JKN Perusahaan 4%": row["jkn_company"] += d.amount
+            elif d.salary_component == "JHT Karyawan 2%": row["jht_employee"] += d.amount
+            elif d.salary_component == "JP Karyawan 1%": row["jp_employee"] += d.amount
+            elif d.salary_component == "JKN Karyawan 1%": row["jkn_employee"] += d.amount
+            
+        # Jika slip ini tidak memiliki satupun komponen BPJS, lewati saja
+        if row["jht_company"] == 0 and row["jht_employee"] == 0 and row["jkn_company"] == 0 and row["jkn_employee"] == 0:
+            continue
+            
         row["total_company"] = row["jht_company"] + row["jkk"] + row["jkm"] + row["jp_company"] + row["jkn_company"]
         row["total_employee"] = row["jht_employee"] + row["jp_employee"] + row["jkn_employee"]
         row["total_all"] = row["total_company"] + row["total_employee"]
         
-        if row["total_all"] > 0:
-            data.append(row)
-            
+        data.append(row)
+        
     return data
