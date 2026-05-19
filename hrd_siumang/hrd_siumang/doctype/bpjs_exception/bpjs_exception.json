@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-05-17 13:42:59.865665",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "reported_salary",
+  "include_bpjs_tk",
+  "include_bpjs_kes"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "description": "Kosongkan jika menggunakan Gaji Pokok standar. Isi jika gaji yang dilaporkan berbeda (UMR/Tertentu).",
+   "fieldname": "reported_salary",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Reported Salary (Dasar Pemotongan)"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_bpjs_tk",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Bayarkan BPJS TK"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_bpjs_kes",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Bayarkan BPJS Kes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-05-19 13:42:53.381921",
+ "modified_by": "Administrator",
+ "module": "Hrd Siumang",
+ "name": "BPJS Exception",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -21,7 +21,6 @@ fixtures = [
 	"overtime_planning_workflow.json",  # Fixture baru
 	"overtime_planning_workflow_states.json",  # Fixture baru
 	"hrd_siumang_custom_fields.json",  # Fixture custom field baru
-	{"doctype": "DocType", "filters": [["name", "in", ["BPJS Setting", "BPJS Component", "BPJS Exception", "BPJS Exception Reported Salary", "BPJS Exception Component"]]]},
 	{
 		"doctype": "Tarif Efektif Rerata",
 		"file": "tarif_efektif_rerata.json",

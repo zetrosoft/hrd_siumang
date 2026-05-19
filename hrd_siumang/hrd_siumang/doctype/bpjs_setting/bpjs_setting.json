@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-05-17 13:42:59.951261",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "komponen_bpjs_tk",
+  "komponen_bpjs_kes",
+  "pengecualian_gaji",
+  "pengecualian_komponen"
+ ],
+ "fields": [
+  {
+   "fieldname": "komponen_bpjs_tk",
+   "fieldtype": "Table",
+   "label": "Komponen BPJS Ketenagakerjaan",
+   "options": "BPJS Component"
+  },
+  {
+   "fieldname": "komponen_bpjs_kes",
+   "fieldtype": "Table",
+   "label": "Komponen BPJS Kesehatan",
+   "options": "BPJS Component"
+  },
+  {
+   "fieldname": "pengecualian_gaji",
+   "fieldtype": "Table",
+   "label": "Pengecualian Gaji Dilaporkan",
+   "options": "BPJS Exception Reported Salary"
+  },
+  {
+   "fieldname": "pengecualian_komponen",
+   "fieldtype": "Table",
+   "label": "Pengecualian Status BPJS TK/Kes",
+   "options": "BPJS Exception Component"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-05-19 13:42:34.042690",
+ "modified_by": "Administrator",
+ "module": "Hrd Siumang",
+ "name": "BPJS Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
