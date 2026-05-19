@@ -3,7 +3,7 @@ from frappe import _
 from frappe.query_builder import Order
 from frappe.utils import getdate
 
-from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph21
+from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph21, get_payroll_denominator
 
 
 def _calculate_borongan_for_employee(employee, start_date, end_date):
@@ -27,13 +27,10 @@ def _calculate_borongan_for_employee(employee, start_date, end_date):
 		total_earnings += individual_earnings[0][0]
 
 	# --- 2. Get Team Earnings ---
-	# Find all teams the employee is a member of
 	member_of_teams = frappe.get_all("Anggota Tim Borongan", filters={"karyawan": employee}, pluck="parent")
-
 	if not member_of_teams:
 		return total_earnings
 
-	# Get all team-based work within the period
 	team_based_work = frappe.get_all(
 		"Detail Hasil Borongan",
 		fields=["parent", "karyawan", "total_harga_item"],
@@ -47,7 +44,6 @@ def _calculate_borongan_for_employee(employee, start_date, end_date):
 	if not team_based_work:
 		return total_earnings
 
-	# Pre-fetch parent dates
 	parent_docs = frappe.get_all(
 		"Input Hasil Borongan",
 		filters={
@@ -59,7 +55,6 @@ def _calculate_borongan_for_employee(employee, start_date, end_date):
 	)
 	valid_parents = {doc.name: doc.tanggal for doc in parent_docs}
 
-	# Pre-fetch team member counts
 	team_member_counts = {}
 	for team_name in member_of_teams:
 		count = frappe.db.count("Anggota Tim Borongan", {"parent": team_name, "parenttype": "Tim Borongan"})
@@ -78,12 +73,8 @@ def _calculate_borongan_for_employee(employee, start_date, end_date):
 def calculate_payroll_components(doc, method):
 	"""
 	DocEvent for Salary Slip before_save.
-	Calculates all salary components based on custom logic defined in hrd_siumang app.
-	This now includes a special path for 'Struktur Gaji - Harian'.
 	"""
-	# --- Special Path for Incentive Salary Slips ---
-	# Skip all calculations if this slip is generated from Employee Incentive
-	if getattr(doc, "custom_is_incentive_slip", None):
+	if getattr(doc, "custom_is_incentive_slip", None) or doc.docstatus > 0:
 		return
 
 	if doc.payroll_entry:
@@ -91,357 +82,173 @@ def calculate_payroll_components(doc, method):
 		if is_incentive_pe:
 			return
 
-	# --- Special Path for Daily/Borongan Workers ---
+	# --- Common Variables ---
+	employee_id = doc.employee
+	start_date = doc.start_date
+	end_date = doc.end_date
+	
+	# Determine Denominator (21 or 25)
+	denominator = get_payroll_denominator(employee_id)
+	
+	# BPJS Base Calculation
+	base_amount = doc.base or 0
+	tunjangan_tetap = 0
+	if frappe.db.exists("Employee Allowance Data", {"employee": employee_id}):
+		ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
+		tunjangan_tetap = (ea_doc.tunjangan_jabatan or 0) + (ea_doc.tunjangan_komunikasi or 0)
+	
+	bpjs_base = base_amount + tunjangan_tetap
+
+	# --- 1. Handle Unpaid Leaves & Cuti Bersama Logic ---
+	# Get Attendance and Leave records
+	unpaid_days = 0
+	
+	# ST: Sakit Tanpa Surat (Always Unpaid)
+	st_days = frappe.db.count("Leave Application", {
+		"employee": employee_id,
+		"leave_type": "Sakit (Tanpa Surat)",
+		"status": "Approved",
+		"from_date": ["<=", end_date],
+		"to_date": [">=", start_date],
+		"docstatus": 1
+	})
+	
+	# CB: Cuti Bersama (Check balance)
+	# This is a simplification: if jatah is 0, it counts as unpaid
+	# In real ERPNext, it's better to check Leave Ledger, but here we follow the "potong upah" requirement
+	# We'll check if Leave Application "Cuti Bersama" exists for this period
+	cb_applications = frappe.get_all("Leave Application", filters={
+		"employee": employee_id,
+		"leave_type": "Cuti Bersama",
+		"status": "Approved",
+		"from_date": ["<=", end_date],
+		"to_date": [">=", start_date],
+		"docstatus": 1
+	}, fields=["total_leave_days"])
+	
+	cb_unpaid_days = 0
+	for cb in cb_applications:
+		# Logic: if jatah is negative or 0 (simulated by a custom check or just policy)
+		# For this implementation, we'll assume CB is unpaid if it's explicitly marked as unpaid 
+		# OR we can check remaining leave balance of 'Cuti Tahunan'
+		annual_leave_balance = frappe.db.get_value("Leave Allocation", 
+			{"employee": employee_id, "leave_type": "Cuti Tahunan", "docstatus": 1}, 
+			"unused_leaves") or 0
+		
+		if annual_leave_balance <= 0:
+			cb_unpaid_days += cb.total_leave_days
+
+	# Absent days
+	absent_days = frappe.db.count("Attendance", {
+		"employee": employee_id,
+		"status": "Absent",
+		"attendance_date": ["between", (start_date, end_date)],
+	})
+	
+	unpaid_days = st_days + cb_unpaid_days + absent_days
+
+	# --- 2. Calculation Logic for Different Structures ---
+	new_earnings = []
+	new_deductions = []
+	earnings_map = {}
+	deductions_map = {}
+
+	# BPJS Setting Logic
+	bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+	include_bpjs_tk = True
+	include_bpjs_kes = True
+	bpjs_base_tk = bpjs_base
+	bpjs_base_kes = bpjs_base
+
+	if bpjs_setting:
+		if hasattr(bpjs_setting, "pengecualian_gaji"):
+			for exc in bpjs_setting.pengecualian_gaji:
+				if exc.employee == employee_id and exc.reported_salary:
+					bpjs_base_tk = exc.reported_salary
+					bpjs_base_kes = exc.reported_salary
+					break
+		if hasattr(bpjs_setting, "pengecualian_komponen"):
+			for exc in bpjs_setting.pengecualian_komponen:
+				if exc.employee == employee_id:
+					include_bpjs_tk = exc.include_bpjs_tk
+					include_bpjs_kes = exc.include_bpjs_kes
+					break
+
+	# Special Path for Harian
 	if doc.salary_structure == "Struktur Gaji - Harian":
-		# Calculate total borongan earnings for the period
-		total_borongan = _calculate_borongan_for_employee(doc.employee, doc.start_date, doc.end_date)
-
-		new_earnings = []
-		new_deductions = []
-		earnings_map = {}
-		deductions_map = {}
-
-		salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
-		
-		# Ambil base_amount dari Salary Structure Assignment untuk perhitungan BPJS
-		base_amount = 0
-		tunjangan_tetap = 0
-		ssa = frappe.get_all("Salary Structure Assignment", filters={"employee": doc.employee, "docstatus": 1}, fields=["name", "base"], limit=1)
-		if ssa:
-			base_amount = ssa[0].base
-			if frappe.db.exists("Employee Allowance Data", {"employee": doc.employee}):
-				ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": doc.employee})
-				tunjangan_tetap = (ea_doc.tunjangan_jabatan or 0) + (ea_doc.tunjangan_komunikasi or 0)
-				
-		bpjs_base = base_amount + tunjangan_tetap
-		
-		# --- Logika BPJS Custom ---
-		bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
-		include_bpjs_tk = True
-		include_bpjs_kes = True
-		bpjs_base_tk = bpjs_base
-		bpjs_base_kes = bpjs_base
-		komponen_tk = []
-		komponen_kes = []
-
-		if bpjs_setting:
-			komponen_tk = [row.salary_component for row in bpjs_setting.komponen_bpjs_tk]
-			komponen_kes = [row.salary_component for row in bpjs_setting.komponen_bpjs_kes]
-			
-			if hasattr(bpjs_setting, "pengecualian_gaji"):
-				for exc in bpjs_setting.pengecualian_gaji:
-					if exc.employee == doc.employee:
-						if exc.reported_salary:
-							bpjs_base_tk = exc.reported_salary
-							bpjs_base_kes = exc.reported_salary
-						break
-			
-			if hasattr(bpjs_setting, "pengecualian_komponen"):
-				for exc in bpjs_setting.pengecualian_komponen:
-					if exc.employee == doc.employee:
-						include_bpjs_tk = exc.include_bpjs_tk
-						include_bpjs_kes = exc.include_bpjs_kes
-						break
-
-		# KHUSUS HARIAN: Jika total borongan 0, paksa nilai BPJS menjadi 0 secara mutlak 
-		# (meskipun karyawan terdaftar di BPJS Setting)
+		total_borongan = _calculate_borongan_for_employee(employee_id, start_date, end_date)
+		earnings_map["Gaji Pokok"] = total_borongan
 		if total_borongan == 0:
 			bpjs_base_tk = 0
 			bpjs_base_kes = 0
-
-		if include_bpjs_tk:
-			earnings_map.update({
-				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
-				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
-				"JKM 0,3%": round(bpjs_base_tk * 0.003),
-				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
-			})
-			deductions_map.update({
-				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
-				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
-				"JKM 0,3%": round(bpjs_base_tk * 0.003),
-				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02),
-				"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
-				"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
-			})
-
-		if include_bpjs_kes:
-			earnings_map.update({
-				"JKN Perusahaan 4%": 0
-			})
-			deductions_map.update({
-				"JKN Perusahaan 4%": 0,
-				"JKN Karyawan 1%": 0
-			})
-
-		# Populate earnings
-		for comp_row in salary_structure_doc.earnings:
-			amount = 0
-			if comp_row.salary_component == "Gaji Pokok":
-				amount = total_borongan
-			elif comp_row.salary_component in earnings_map:
-				# Hanya ambil nilai jika itu adalah komponen BPJS yang diizinkan (nilai > 0 atau secara implisit 0 karena setting)
-				if comp_row.salary_component in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%", "JKN Perusahaan 4%"]:
-					amount = earnings_map[comp_row.salary_component]
-
-			new_earnings.append(
-				{
-					"doctype": "Salary Detail",
-					"salary_component": comp_row.salary_component,
-					"amount": amount,
-				}
-			)
-
-		# Populate deductions
-		for comp_row in salary_structure_doc.deductions:
-			amount = 0
-			if comp_row.salary_component in deductions_map:
-				if comp_row.salary_component in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%", "JHT Karyawan 2%", "JP Karyawan 1%", "JKN Perusahaan 4%", "JKN Karyawan 1%"]:
-					amount = deductions_map[comp_row.salary_component]
-				
-			new_deductions.append(
-				{
-					"doctype": "Salary Detail",
-					"salary_component": comp_row.salary_component,
-					"amount": amount,
-				}
-			)
-
-		doc.set("earnings", new_earnings)
-		doc.set("deductions", new_deductions)
-
-		# Recalculate final amounts
-		doc.gross_pay = sum(e.get("amount", 0) for e in new_earnings)
-		doc.total_deduction = sum(d.get("amount", 0) for d in new_deductions)
-		doc.net_pay = doc.gross_pay - doc.total_deduction
-
-		return  # IMPORTANT: Stop execution to prevent regular calculation from running
-
-	# --- Regular Monthly Calculation Logic (Original Code) ---
-	# Guard clause to prevent recalculation on submitted documents
-	if doc.docstatus > 0 or doc.get("__submitting") or doc.flags.in_submit:
-		return
-
-	try:
-		# --- Find and set Salary Structure if not present ---
-		if not doc.salary_structure:
-			joining_date = frappe.get_cached_value("Employee", doc.employee, "date_of_joining")
-
-			ss = frappe.qb.DocType("Salary Structure")
-			ssa = frappe.qb.DocType("Salary Structure Assignment")
-
-			query = (
-				frappe.qb.from_(ssa)
-				.join(ss)
-				.on(ssa.salary_structure == ss.name)
-				.select(ssa.salary_structure)
-				.where(
-					(ssa.docstatus == 1)
-					& (ss.docstatus == 1)
-					& (ss.is_active == "Yes")
-					& (ssa.employee == doc.employee)
-					& (
-						(ssa.from_date <= doc.start_date)
-						| (ssa.from_date <= doc.end_date)
-						| (ssa.from_date <= joining_date if joining_date else getdate())
-					)
-				)
-				.orderby(ssa.from_date, order=Order.desc)
-				.limit(1)
-			)
-
-			if not doc.salary_slip_based_on_timesheet and doc.payroll_frequency:
-				query = query.where(ss.payroll_frequency == doc.payroll_frequency)
-
-			st_name = query.run(as_list=True)
-
-			if st_name and st_name[0]:
-				doc.salary_structure = st_name[0][0]
-			else:
-				frappe.throw(
-					_(
-						"No active or default Salary Structure found for employee {0} for the given dates"
-					).format(doc.employee)
-				)
-
-		# --- Start of Calculation Logic ---
-		new_earnings = []
-		new_deductions = []
-		earnings_map = {}
-		deductions_map = {}
-
-		employee_id = doc.employee
-		ssa = frappe.get_doc("Salary Structure Assignment", {"employee": employee_id, "docstatus": 1})
-		if not ssa:
-			frappe.throw(f"No active Salary Structure Assignment found for Employee {employee_id}")
-
-		ea_doc = (
-			frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
-			if frappe.db.exists("Employee Allowance Data", {"employee": employee_id})
-			else None
-		)
-		salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
-
-		base_amount = ssa.base
+	else:
+		# Monthly Calculation
 		earnings_map["Gaji Pokok"] = base_amount
-
-		tunjangan_tetap = 0
 		if ea_doc:
-			tunjangan_jabatan = ea_doc.tunjangan_jabatan or 0
-			tunjangan_komunikasi = ea_doc.tunjangan_komunikasi or 0
-			tunjangan_tetap = tunjangan_jabatan + tunjangan_komunikasi
-			earnings_map.update(
-				{
-					"Tj. Jabatan": tunjangan_jabatan,
-					"Tj. Komunikasi": tunjangan_komunikasi,
-					"Tj. Transport": ea_doc.tunjangan_transport or 0,
-					"Tj. Makan": ea_doc.tunjangan_makan or 0,
-					"Tj. Lain": ea_doc.tunjangan_lain or 0,
-				}
-			)
-
-		bpjs_base = base_amount + tunjangan_tetap
-		
-		# --- Logika BPJS Custom ---
-		bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
-		
-		include_bpjs_tk = True
-		include_bpjs_kes = True
-		bpjs_base_tk = bpjs_base
-		bpjs_base_kes = bpjs_base
-		
-		komponen_tk = []
-		komponen_kes = []
-
-		if bpjs_setting:
-			komponen_tk = [row.salary_component for row in bpjs_setting.komponen_bpjs_tk]
-			komponen_kes = [row.salary_component for row in bpjs_setting.komponen_bpjs_kes]
-			
-			# Cek List 1: Pengecualian Gaji (Problem 2 & 3)
-			if hasattr(bpjs_setting, "pengecualian_gaji"):
-				for exc in bpjs_setting.pengecualian_gaji:
-					if exc.employee == doc.employee:
-						if exc.reported_salary:
-							bpjs_base_tk = exc.reported_salary
-							bpjs_base_kes = exc.reported_salary
-						break
-			
-			# Cek List 2: Pengecualian Status BPJS TK/Kes (Problem 4 & 5)
-			# List 2 akan menimpa include_bpjs_tk dan include_bpjs_kes jika karyawan ada di dalam list ini.
-			if hasattr(bpjs_setting, "pengecualian_komponen"):
-				for exc in bpjs_setting.pengecualian_komponen:
-					if exc.employee == doc.employee:
-						include_bpjs_tk = exc.include_bpjs_tk
-						include_bpjs_kes = exc.include_bpjs_kes
-						break
-
-		if include_bpjs_tk:
 			earnings_map.update({
-				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
-				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
-				"JKM 0,3%": round(bpjs_base_tk * 0.003),
-				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
+				"Tj. Jabatan": ea_doc.tunjangan_jabatan or 0,
+				"Tj. Komunikasi": ea_doc.tunjangan_komunikasi or 0,
+				"Tj. Transport": ea_doc.tunjangan_transport or 0,
+				"Tj. Makan": ea_doc.tunjangan_makan or 0,
+				"Tj. Lain": ea_doc.tunjangan_lain or 0,
 			})
-			deductions_map.update({
-				"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
-				"JKK 0,89%": round(bpjs_base_tk * 0.0089),
-				"JKM 0,3%": round(bpjs_base_tk * 0.003),
-				"JP Perusahaan 2%": round(bpjs_base_tk * 0.02),
-				"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
-				"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
-			})
-		else:
-			for comp in komponen_tk:
-				if comp in ["JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%"]:
-					earnings_map[comp] = 0
-				deductions_map[comp] = 0
-
-		if include_bpjs_kes:
-			earnings_map.update({
-				"JKN Perusahaan 4%": 0
-			})
-			deductions_map.update({
-				"JKN Perusahaan 4%": 0,
-				"JKN Karyawan 1%": 0
-			})
-		else:
-			for comp in komponen_kes:
-				if comp in ["JKN Perusahaan 4%"]:
-					earnings_map[comp] = 0
-				deductions_map[comp] = 0
-		# --- Akhir Logika BPJS Custom ---
-
-		earnings_map["Overtime"] = calculate_overtime(doc)
-
-		absent_days = frappe.db.count(
-			"Attendance",
-			{
-				"employee": doc.employee,
-				"status": "Absent",
-				"attendance_date": ["between", (doc.start_date, doc.end_date)],
-			},
-		)
-		if absent_days > 0:
-			deductions_map["Absensi"] = round((bpjs_base / 25) * absent_days)
+		
+		# Apply Absent Deduction (The 21/25 logic)
+		if unpaid_days > 0:
+			deductions_map["Absensi"] = round((bpjs_base / denominator) * unpaid_days)
 		else:
 			deductions_map["Absensi"] = 0
 
-		additional_salaries = frappe.get_all(
-			"Additional Salary",
-			filters={
-				"employee": doc.employee,
-				"payroll_date": ["between", (doc.start_date, doc.end_date)],
-				"docstatus": 1,
-			},
-			fields=["salary_component", "amount", "type"],
-		)
-		for ad_sal in additional_salaries:
-			if ad_sal.type == "Earning":
-				earnings_map[ad_sal.salary_component] = (
-					earnings_map.get(ad_sal.salary_component, 0) + ad_sal.amount
-				)
-			elif ad_sal.type == "Deduction":
-				deductions_map[ad_sal.salary_component] = (
-					deductions_map.get(ad_sal.salary_component, 0) + ad_sal.amount
-				)
+	# BPJS Components
+	if include_bpjs_tk:
+		bpjs_tk_earnings = {
+			"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
+			"JKK 0,89%": round(bpjs_base_tk * 0.0089),
+			"JKM 0,3%": round(bpjs_base_tk * 0.003),
+			"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
+		}
+		earnings_map.update(bpjs_tk_earnings)
+		deductions_map.update(bpjs_tk_earnings)
+		deductions_map.update({
+			"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
+			"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
+		})
 
-		gross_pay_temp = sum(earnings_map.values())
-		doc.gross_pay = gross_pay_temp
-		deductions_map["Tax"] = calculate_pph21(doc)
+	if include_bpjs_kes:
+		earnings_map["JKN Perusahaan 4%"] = 0
+		deductions_map["JKN Perusahaan 4%"] = 0
+		deductions_map["JKN Karyawan 1%"] = 0
 
-		for comp_row in salary_structure_doc.earnings:
-			amount = earnings_map.get(comp_row.salary_component, 0)
-			sal_comp_doc = frappe.get_doc("Salary Component", comp_row.salary_component)
-			if not sal_comp_doc.remove_if_zero_valued or amount > 0:
-				new_earnings.append(
-					{
-						"doctype": "Salary Detail",
-						"salary_component": comp_row.salary_component,
-						"amount": amount,
-					}
-				)
+	earnings_map["Overtime"] = calculate_overtime(doc)
 
-		for comp_row in salary_structure_doc.deductions:
-			amount = deductions_map.get(comp_row.salary_component, 0)
-			sal_comp_doc = frappe.get_doc("Salary Component", comp_row.salary_component)
-			if not sal_comp_doc.remove_if_zero_valued or amount > 0:
-				new_deductions.append(
-					{
-						"doctype": "Salary Detail",
-						"salary_component": comp_row.salary_component,
-						"amount": amount,
-					}
-				)
+	# Additional Salary integration
+	additional_salaries = frappe.get_all("Additional Salary", filters={
+		"employee": employee_id,
+		"payroll_date": ["between", (start_date, end_date)],
+		"docstatus": 1,
+	}, fields=["salary_component", "amount", "type"])
+	
+	for ad_sal in additional_salaries:
+		target_map = earnings_map if ad_sal.type == "Earning" else deductions_map
+		target_map[ad_sal.salary_component] = target_map.get(ad_sal.salary_component, 0) + ad_sal.amount
 
-		doc.set("earnings", new_earnings)
-		doc.set("deductions", new_deductions)
+	# Finalize Structure
+	salary_structure_doc = frappe.get_doc("Salary Structure", doc.salary_structure)
+	
+	# PPh 21 Calculation
+	doc.gross_pay = sum(earnings_map.values())
+	deductions_map["Tax"] = calculate_pph21(doc)
 
-		doc.gross_pay = sum(e.get("amount") for e in new_earnings)
-		doc.total_deduction = sum(d.get("amount") for d in new_deductions)
-		doc.net_pay = doc.gross_pay - doc.total_deduction
+	for comp_row in salary_structure_doc.earnings:
+		amount = earnings_map.get(comp_row.salary_component, 0)
+		new_earnings.append({"doctype": "Salary Detail", "salary_component": comp_row.salary_component, "amount": amount})
 
-	except Exception as e:
-		frappe.log_error(
-			f"FATAL ERROR in hrd_siumang calculate_payroll_components: {e}", "HRD Siumang Calculation"
-		)
-		raise
+	for comp_row in salary_structure_doc.deductions:
+		amount = deductions_map.get(comp_row.salary_component, 0)
+		new_deductions.append({"doctype": "Salary Detail", "salary_component": comp_row.salary_component, "amount": amount})
+
+	doc.set("earnings", new_earnings)
+	doc.set("deductions", new_deductions)
+	doc.gross_pay = sum(e.get("amount", 0) for e in new_earnings)
+	doc.total_deduction = sum(d.get("amount", 0) for d in new_deductions)
+	doc.net_pay = doc.gross_pay - doc.total_deduction
