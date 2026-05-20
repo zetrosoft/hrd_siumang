@@ -5,4 +5,4 @@
 #hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll
 hrd_siumang.patches.v2_0.rebuild_payroll_setup
 hrd_siumang.patches.v2_0.setup_attendance_sync_production
-hrd_siumang.patches.setup_hr_defaults.execute
+hrd_siumang.patches.setup_hr_defaults
