@@ -4,50 +4,49 @@ from frappe import _
 __version__ = '0.0.1'
 
 # Monkey Patch for Employee Exits Report
-def patch_employee_exits_summary():
+def patch_employee_exits_report():
     try:
         from hrms.hr.report.employee_exits import employee_exits
         
-        # Simpan fungsi aslinya jika belum ada
-        if not hasattr(employee_exits, 'original_get_report_summary'):
-            employee_exits.original_get_report_summary = employee_exits.get_report_summary
+        # Patch the main execute function for total control
+        if not hasattr(employee_exits, 'original_execute'):
+            employee_exits.original_execute = employee_exits.execute
             
-            def custom_get_report_summary(data):
-                # Panggil fungsi asli
-                summary = employee_exits.original_get_report_summary(data)
+            def custom_execute(filters=None):
+                # Run the original report logic
+                result = employee_exits.original_execute(filters)
                 
-                if not summary:
-                    return summary
-                
-                # List label yang ingin dibuang (dalam berbagai kemungkinan bahasa)
-                # Gunakan set untuk pencarian lebih cepat dan robust
-                to_exclude = {
-                    _("Pending FnF").strip(),
-                    _("Pending Questionnaires").strip(),
-                    "Pending FnF",
-                    "Pending Questionnaires",
-                    "FnF Tertunda", # Manual check Bahasa Indonesia
-                    "Kuesioner Tertunda"
-                }
-                
-                filtered_summary = []
-                for item in summary:
-                    label = str(item.get("label", "")).strip()
-                    # Log untuk debugging (cek di logs/frappe.log atau logs/worker.log)
-                    # frappe.logger("patch").debug(f"Checking label: {label}")
+                # result is expected to be: columns, data, message, chart, report_summary
+                if result and len(result) >= 5:
+                    columns, data, message, chart, report_summary = list(result)
                     
-                    if label not in to_exclude:
-                        filtered_summary.append(item)
+                    if report_summary:
+                        # Defensive filtering
+                        excluded_keywords = [
+                            "pending fnf", 
+                            "pending questionnaires", 
+                            "fnf tertunda", 
+                            "kuesioner tertunda"
+                        ]
+                        
+                        new_summary = []
+                        for item in report_summary:
+                            label = str(item.get("label", "")).lower()
+                            # Check if any keyword matches the label
+                            if not any(kw in label for kw in excluded_keywords):
+                                new_summary.append(item)
+                        
+                        report_summary = new_summary
+                    
+                    return columns, data, message, chart, report_summary
                 
-                return filtered_summary
+                return result
 
-            # Timpa fungsi asli
-            employee_exits.get_report_summary = custom_get_report_summary
-            # frappe.logger("patch").debug("Employee Exits Report summary patched successfully")
+            # Override the module function
+            employee_exits.execute = custom_execute
             
-    except Exception as e:
-        # frappe.logger("patch").error(f"Failed to patch Employee Exits Report: {e}")
+    except Exception:
         pass
 
-# Jalankan patch
-patch_employee_exits_summary()
+# Run the patch
+patch_employee_exits_report()
