@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 
 __version__ = '0.0.1'
 
@@ -17,8 +18,13 @@ def patch_employee_exits_summary():
                 
                 if summary:
                     # Filter: Hanya simpan yang labelnya BUKAN Pending FnF atau Pending Questionnaires
-                    # Kita cek label bahasa Inggris dan kemungkinan terjemahannya
-                    excluded_labels = ["Pending FnF", "Pending Questionnaires"]
+                    # Gunakan _() agar mencocokkan label yang sudah diterjemahkan maupun aslinya
+                    excluded_labels = [
+                        _("Pending FnF"), 
+                        _("Pending Questionnaires"),
+                        "Pending FnF", 
+                        "Pending Questionnaires"
+                    ]
                     
                     filtered_summary = []
                     for item in summary:
