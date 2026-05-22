@@ -1,11 +1,3 @@
-import frappe
-
-# DEBUG: Bukti bahwa hooks dimuat. Cek Error Log setelah restart.
-try:
-    frappe.log_error("Aplikasi hrd_siumang Hooks Dimuat", "HOOK_LOADED")
-except:
-    pass
-
 app_name = "hrd_siumang"
 app_title = "Hrd Siumang"
 app_publisher = "Bijak Techno"
@@ -13,25 +5,10 @@ app_description = "HRD Siumang Custom Apps"
 app_email = "support@bijaktechnology.com"
 app_license = "mit"
 
-# MONKEY PATCH DEFINITIF
-import frappe.desk.query_report as query_report
-if not hasattr(query_report, 'original_run'):
-    query_report.original_run = query_report.run
-    
-    def custom_run(report_name, filters=None, user=None, **kwargs):
-        res = query_report.original_run(report_name, filters, user, **kwargs)
-        if report_name == "Employee Exits" and isinstance(res, dict) and "report_summary" in res:
-            # Saring summary secara agresif
-            res["report_summary"] = [
-                i for i in res["report_summary"] 
-                if not any(kw in str(i.get("label", "")).lower() for kw in ["fnf", "questionnaire", "kuesioner"])
-            ]
-            frappe.log_error("Patch Berhasil Memfilter Laporan Employee Exits", "DEBUG_PATCH_EE")
-        return res
-    
-    query_report.run = custom_run
+override_whitelisted_methods = {
+	"frappe.desk.query_report.run": "hrd_siumang.api.custom_query_report_run"
+}
 
-# Konfigurasi Hooks Standar
 override_doctype_class = {
 	"Job Requisition": "hrd_siumang.overrides.custom_job_requisition.CustomJobRequisition",
 	"Salary Slip": "hrd_siumang.overrides.custom_salary_slip.CustomSalarySlip",
