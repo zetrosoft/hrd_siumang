@@ -3,50 +3,42 @@ from frappe import _
 
 __version__ = '0.0.1'
 
-# Monkey Patch for Employee Exits Report
-def patch_employee_exits_report():
+def patch_report_globally():
     try:
-        from hrms.hr.report.employee_exits import employee_exits
+        from frappe.core.doctype.report.report import Report
         
-        # Patch the main execute function for total control
-        if not hasattr(employee_exits, 'original_execute'):
-            employee_exits.original_execute = employee_exits.execute
+        if not hasattr(Report, 'original_execute_module'):
+            Report.original_execute_module = Report.execute_module
             
-            def custom_execute(filters=None):
-                # Run the original report logic
-                result = employee_exits.original_execute(filters)
+            def custom_execute_module(self, filters):
+                res = self.original_execute_module(filters)
                 
-                # result is expected to be: columns, data, message, chart, report_summary
-                if result and len(result) >= 5:
-                    columns, data, message, chart, report_summary = list(result)
+                # Check if this is the target report
+                if self.name == "Employee Exits" and isinstance(res, (list, tuple)) and len(res) >= 5:
+                    # columns, data, message, chart, report_summary
+                    res_list = list(res)
+                    report_summary = res_list[4]
                     
-                    if report_summary:
-                        # Defensive filtering
-                        excluded_keywords = [
-                            "pending fnf", 
-                            "pending questionnaires", 
-                            "fnf tertunda", 
-                            "kuesioner tertunda"
-                        ]
+                    if report_summary and isinstance(report_summary, list):
+                        excluded_keywords = ["fnf", "questionnaire", "kuesioner"]
                         
                         new_summary = []
                         for item in report_summary:
                             label = str(item.get("label", "")).lower()
-                            # Check if any keyword matches the label
                             if not any(kw in label for kw in excluded_keywords):
                                 new_summary.append(item)
                         
-                        report_summary = new_summary
+                        res_list[4] = new_summary
                     
-                    return columns, data, message, chart, report_summary
+                    return tuple(res_list)
                 
-                return result
+                return res
 
-            # Override the module function
-            employee_exits.execute = custom_execute
+            Report.execute_module = custom_execute_module
+            # frappe.logger("patch").debug("Global Report execute_module patched for Employee Exits")
             
     except Exception:
         pass
 
-# Run the patch
-patch_employee_exits_report()
+# Initialize patches
+patch_report_globally()
