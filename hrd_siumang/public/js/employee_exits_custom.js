@@ -1,19 +1,35 @@
-// Employee Exits Report UI Customization
+/**
+ * Employee Exits Customization
+ * Menyembunyikan statistik dan filter menggunakan CSS (Safe Method)
+ */
+$(document).on('app_ready', function() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* Sembunyikan summary item berdasarkan urutan atau teks jika memungkinkan */
+        /* Karena kita mem-patch server, item ini seharusnya sudah hilang dari JSON */
+        /* CSS ini sebagai pengaman tambahan */
+        .report-summary .summary-item:nth-child(3), 
+        .report-summary .summary-item:nth-child(4) {
+            display: none !important;
+        }
+
+        /* Sembunyikan Filter Dashboard */
+        div[data-fieldname="fnf_pending"],
+        div[data-fieldname="questionnaire_pending"],
+        div[data-fieldname="exit_interview_pending"] {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+});
+
+// Tetap gunakan logic JS untuk membersihkan objek filter jika dimungkinkan
 frappe.query_reports["Employee Exits"] = $.extend(true, frappe.query_reports["Employee Exits"], {
     onload: function(report) {
-        // Hapus filter yang tidak diinginkan dari definisi laporan
-        if (report.report_name === "Employee Exits" && report.filters) {
-            const excluded_fields = ['fnf_pending', 'questionnaire_pending', 'exit_interview_pending'];
-            report.filters = report.filters.filter(f => !excluded_fields.includes(f.fieldname));
+        if (report.filters) {
+            report.filters = report.filters.filter(f => 
+                !['fnf_pending', 'questionnaire_pending', 'exit_interview_pending'].includes(f.fieldname)
+            );
         }
-    },
-    after_render: function(report) {
-        // Sembunyikan elemen statistik yang mengandung kata kunci FnF atau Questionnaire
-        $(".report-summary .summary-item").each(function() {
-            let label = $(this).find(".summary-label").text().toLowerCase();
-            if (label.includes("fnf") || label.includes("questionnaire") || label.includes("kuesioner")) {
-                $(this).hide();
-            }
-        });
     }
 });
