@@ -73,6 +73,10 @@ scheduler_events = {
 
 # patches = ["hrd_siumang.patches.20260110_add_borongan_management_card_to_payroll.execute"]
 
+override_whitelisted_methods = {
+	"frappe.desk.query_report.run": "hrd_siumang.api.custom_query_report_run"
+}
+
 # javascript files to be included in header of desk.html
 app_include_js = [
 	"/assets/hrd_siumang/js/employee_exits_custom.js",

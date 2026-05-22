@@ -1,49 +1,24 @@
 import frappe
-from frappe import _
-
+from frappe.desk.query_report import run as original_run
 
 @frappe.whitelist()
-def get_department_approver(department_name: str) -> str | None:
-	"""
-	Fetches the approver for a given department.
-	Assumes Department DocType has a child table custom field that links to 'Department Approver' DocType.
-	"""
-	if not department_name:
-		return None
-
-	custom_table_field = frappe.get_all(
-		"Custom Field",
-		filters={
-			"dt": "Department",
-			"fieldtype": "Table",
-			"options": "Department Approver",
-		},
-		fields=["fieldname"],
-		limit=1,
-	)
-
-	if not custom_table_field:
-		frappe.log_error(
-			"No custom table field found on Department linking to 'Department Approver'.",
-			"Department Approver Lookup",
-		)
-		return None
-
-	approver = frappe.get_all(
-		"Department Approver",
-		filters={
-			"parenttype": "Department",
-			"parent": department_name,
-		},
-		fields=["approver"],
-		limit=1,
-	)
-
-	if approver:
-		return approver[0].approver
-	else:
-		frappe.log_error(
-			f"No approver found in Department Approver child table for department: {department_name}",
-			"Department Approver Lookup",
-		)
-		return None
+def custom_query_report_run(report_name, filters=None, user=None, **kwargs):
+    # Log ke Error Log agar Anda bisa memverifikasi di Desk
+    frappe.log_error(f"API Patch Terpanggil untuk: {report_name}", "DEBUG_PATCH_EE")
+    
+    # Jalankan fungsi asli
+    res = original_run(report_name, filters, user, **kwargs)
+    
+    # Intersepsi hasil khusus untuk Employee Exits
+    if report_name == "Employee Exits" and isinstance(res, dict) and "report_summary" in res:
+        summary = res.get("report_summary")
+        if summary:
+            excluded = ["fnf", "questionnaire", "kuesioner"]
+            new_summary = [
+                i for i in summary 
+                if not any(kw in str(i.get("label", "")).lower() for kw in excluded)
+            ]
+            res["report_summary"] = new_summary
+            frappe.log_error(f"Summary Berhasil Difilter: {len(new_summary)} item tersisa", "DEBUG_PATCH_EE")
+            
+    return res
