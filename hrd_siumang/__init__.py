@@ -1,44 +1,37 @@
 import frappe
-from frappe import _
 
 __version__ = '0.0.1'
 
-def patch_report_globally():
+# Monkey Patch for Query Report API
+def patch_query_report_run():
     try:
-        from frappe.core.doctype.report.report import Report
+        from frappe.desk import query_report
         
-        if not hasattr(Report, 'original_execute_module'):
-            Report.original_execute_module = Report.execute_module
+        if not hasattr(query_report, 'original_run'):
+            query_report.original_run = query_report.run
             
-            def custom_execute_module(self, filters):
-                res = self.original_execute_module(filters)
+            @frappe.whitelist()
+            def custom_run(report_name, filters=None, user=None, **kwargs):
+                # Execute original run
+                res = query_report.original_run(report_name, filters, user, **kwargs)
                 
-                # Check if this is the target report
-                if self.name == "Employee Exits" and isinstance(res, (list, tuple)) and len(res) >= 5:
-                    # columns, data, message, chart, report_summary
-                    res_list = list(res)
-                    report_summary = res_list[4]
-                    
-                    if report_summary and isinstance(report_summary, list):
+                # Check if it is the target report
+                if report_name == "Employee Exits" and isinstance(res, dict) and "report_summary" in res:
+                    summary = res.get("report_summary")
+                    if summary and isinstance(summary, list):
+                        # Force remove unwanted entries by label keywords
                         excluded_keywords = ["fnf", "questionnaire", "kuesioner"]
-                        
-                        new_summary = []
-                        for item in report_summary:
-                            label = str(item.get("label", "")).lower()
-                            if not any(kw in label for kw in excluded_keywords):
-                                new_summary.append(item)
-                        
-                        res_list[4] = new_summary
-                    
-                    return tuple(res_list)
-                
+                        res["report_summary"] = [
+                            i for i in summary 
+                            if not any(kw in str(i.get("label", "")).lower() for kw in excluded_keywords)
+                        ]
                 return res
 
-            Report.execute_module = custom_execute_module
-            # frappe.logger("patch").debug("Global Report execute_module patched for Employee Exits")
+            # Override the whitelisted function
+            query_report.run = custom_run
             
     except Exception:
         pass
 
 # Initialize patches
-patch_report_globally()
+patch_query_report_run()
