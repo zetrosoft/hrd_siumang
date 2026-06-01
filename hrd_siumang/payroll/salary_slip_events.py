@@ -82,6 +82,9 @@ def calculate_payroll_components(doc, method):
 		if is_incentive_pe:
 			return
 
+	if not doc.salary_structure:
+		return
+
 	# --- Common Variables ---
 	employee_id = doc.employee
 	start_date = doc.start_date
@@ -91,7 +94,20 @@ def calculate_payroll_components(doc, method):
 	denominator = get_payroll_denominator(employee_id)
 	
 	# BPJS Base Calculation
-	base_amount = doc.base or 0
+	# Fetch base from Salary Structure Assignment
+	assignment = frappe.db.get_value(
+		"Salary Structure Assignment",
+		{
+			"employee": employee_id,
+			"salary_structure": doc.salary_structure,
+			"from_date": ("<=", start_date),
+			"docstatus": 1,
+		},
+		"base",
+		order_by="from_date desc"
+	)
+	base_amount = assignment or getattr(doc, "base", 0) or 0
+	
 	tunjangan_tetap = 0
 	if frappe.db.exists("Employee Allowance Data", {"employee": employee_id}):
 		ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
@@ -160,7 +176,21 @@ def calculate_payroll_components(doc, method):
 	bpjs_base_tk = bpjs_base
 	bpjs_base_kes = bpjs_base
 
-	if bpjs_setting:
+	# --- Tenure Based BPJS Eligibility (Migrated from Server Script) ---
+	date_of_joining = frappe.db.get_value("Employee", employee_id, "date_of_joining")
+	health_insurance_no = frappe.db.get_value("Employee", employee_id, "health_insurance_no")
+	
+	is_eligible_bpjs = True
+	if date_of_joining:
+		from frappe.utils import date_diff
+		# Check if tenure > 90 days (approx 3 months)
+		diff_days = date_diff(end_date, date_of_joining)
+		if diff_days <= 90 or not health_insurance_no:
+			is_eligible_bpjs = False
+			include_bpjs_tk = False
+			include_bpjs_kes = False
+
+	if bpjs_setting and is_eligible_bpjs:
 		if hasattr(bpjs_setting, "pengecualian_gaji"):
 			for exc in bpjs_setting.pengecualian_gaji:
 				if exc.employee == employee_id and exc.reported_salary:

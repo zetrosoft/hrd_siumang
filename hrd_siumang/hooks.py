@@ -26,3 +26,12 @@ doctype_js = {
 	"Tim Borongan": "public/js/tim_borongan.js",
 	"Employee Advance": "public/js/employee_advance_client.js",
 }
+
+doc_events = {
+	"Salary Slip": {
+		"before_save": "hrd_siumang.payroll.salary_slip_events.calculate_payroll_components"
+	},
+	"Salary Structure Assignment": {
+		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
+	}
+}

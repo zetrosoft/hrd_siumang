@@ -28,19 +28,18 @@ class CustomSalarySlip(SalarySlip):
 		if is_incentive_slip:
 			# If it's an incentive slip, we call the specific logic defined in our
 			# sales_monitor patch. This function is designed to handle only incentives.
-			frappe.log_error(
-				title="HRD Siumang Override -> Routing to Sales Monitor",
-				message=f"Detected incentive slip for {self.name}. Routing to patched_calculate_net_pay.",
-			)
 			return patched_calculate_net_pay(self, skip_tax_breakup_computation)
 		else:
-			# If it's a normal payroll run, we intentionally do nothing,
-			# allowing the `before_save` hook in hrd_siumang to handle the calculation.
-			frappe.log_error(
-				title="HRD Siumang Override",
-				message=f"Skipping core `calculate_net_pay` for normal slip {self.name} via class override.",
-			)
-			pass
+			# If it's a normal payroll run, we call our custom calculator directly here.
+			# This ensures that when the user clicks 'Get Employee Details' on the UI,
+			# the structure and totals are built and displayed immediately.
+			from hrd_siumang.payroll.salary_slip_events import calculate_payroll_components
+			
+			calculate_payroll_components(self, None)
+			
+			# After setting the custom components, we need to ensure the standard 
+			# totals are calculated based on the new earnings and deductions.
+			self.set_totals()
 
 	def add_tax_components(self):
 		"""
@@ -51,10 +50,6 @@ class CustomSalarySlip(SalarySlip):
 		interfering with our calculations.
 		"""
 		# We add a log to confirm this patch is working.
-		frappe.log_error(
-			title="HRD Siumang Override",
-			message=f"Skipping core `add_tax_components` for {self.name} via class override.",
-		)
 		pass
 
 
