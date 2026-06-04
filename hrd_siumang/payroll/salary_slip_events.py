@@ -108,6 +108,11 @@ def calculate_payroll_components(doc, method):
 	)
 	base_amount = assignment or getattr(doc, "base", 0) or 0
 	
+	# Fallback to Employee CTC if base is still 0
+	if not base_amount:
+		base_amount = frappe.db.get_value("Employee", employee_id, "ctc") or 0
+	
+	ea_doc = None
 	tunjangan_tetap = 0
 	if frappe.db.exists("Employee Allowance Data", {"employee": employee_id}):
 		ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
