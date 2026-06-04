@@ -34,6 +34,7 @@
    "fieldname": "pengecualian_komponen",
    "fieldtype": "Table",
    "label": "Pengecualian Status BPJS TK/Kes",
+   "description": "Jika dicentang, maka komponen tersebut TIDAK AKAN masuk ke dalam slip gaji karyawan yang bersangkutan.",
    "options": "BPJS Exception Component"
   }
  ],

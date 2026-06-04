@@ -175,7 +175,10 @@ def calculate_payroll_components(doc, method):
 	deductions_map = {}
 
 	# BPJS Setting Logic
-	bpjs_setting = frappe.get_doc("BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+	bpjs_setting = frappe.get_doc("BPJS Setting", "BPJS Setting") if frappe.db.exists("BPJS Setting", "BPJS Setting") else None
+	if bpjs_setting:
+		bpjs_setting.validate() # Trigger auto-fill if empty
+	
 	include_bpjs_tk = True
 	include_bpjs_kes = True
 	bpjs_base_tk = bpjs_base
@@ -205,8 +208,9 @@ def calculate_payroll_components(doc, method):
 		if hasattr(bpjs_setting, "pengecualian_komponen"):
 			for exc in bpjs_setting.pengecualian_komponen:
 				if exc.employee == employee_id:
-					include_bpjs_tk = exc.include_bpjs_tk
-					include_bpjs_kes = exc.include_bpjs_kes
+					# Logika: Jika dicentang di UI (True), maka dikecualikan (False)
+					include_bpjs_tk = not exc.include_bpjs_tk
+					include_bpjs_kes = not exc.include_bpjs_kes
 					break
 
 	# Special Path for Harian
@@ -235,24 +239,37 @@ def calculate_payroll_components(doc, method):
 			deductions_map["Absensi"] = 0
 
 	# BPJS Components
+	bpjs_tk_list = [d.salary_component for d in bpjs_setting.komponen_bpjs_tk] if bpjs_setting else []
+	bpjs_kes_list = [d.salary_component for d in bpjs_setting.komponen_bpjs_kes] if bpjs_setting else []
+
 	if include_bpjs_tk:
-		bpjs_tk_earnings = {
+		tk_formulas = {
 			"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
 			"JKK 0,89%": round(bpjs_base_tk * 0.0089),
 			"JKM 0,3%": round(bpjs_base_tk * 0.003),
 			"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
 		}
-		earnings_map.update(bpjs_tk_earnings)
-		deductions_map.update(bpjs_tk_earnings)
-		deductions_map.update({
-			"JHT Karyawan 2%": round(bpjs_base_tk * 0.02),
-			"JP Karyawan 1%": round(bpjs_base_tk * 0.01)
-		})
+		
+		for comp_name, amount in tk_formulas.items():
+			if comp_name in bpjs_tk_list:
+				earnings_map[comp_name] = amount
+				deductions_map[comp_name] = amount
+		
+		if "JHT Karyawan 2%" in bpjs_tk_list:
+			deductions_map["JHT Karyawan 2%"] = round(bpjs_base_tk * 0.02)
+		if "JP Karyawan 1%" in bpjs_tk_list:
+			deductions_map["JP Karyawan 1%"] = round(bpjs_base_tk * 0.01)
 
 	if include_bpjs_kes:
-		earnings_map["JKN Perusahaan 4%"] = 0
-		deductions_map["JKN Perusahaan 4%"] = 0
-		deductions_map["JKN Karyawan 1%"] = 0
+		jkn_perusahaan = round(bpjs_base_kes * 0.04)
+		jkn_karyawan = round(bpjs_base_kes * 0.01)
+		
+		if "JKN Perusahaan 4%" in bpjs_kes_list:
+			earnings_map["JKN Perusahaan 4%"] = jkn_perusahaan
+			deductions_map["JKN Perusahaan 4%"] = jkn_perusahaan
+		
+		if "JKN Karyawan 1%" in bpjs_kes_list:
+			deductions_map["JKN Karyawan 1%"] = jkn_karyawan
 
 	earnings_map["Overtime"] = calculate_overtime(doc)
 
