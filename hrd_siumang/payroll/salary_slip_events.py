@@ -1,10 +1,82 @@
 import frappe
 from frappe import _
 from frappe.query_builder import Order
-from frappe.utils import getdate, add_days, date_diff
+from datetime import timedelta
+from frappe.utils import getdate, add_days, date_diff, get_time, time_diff_in_hours
 from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
 
 from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph21, get_payroll_denominator
+
+
+def _get_unplanned_overtime(employee, start_date, end_date, shift_type_name, holiday_list):
+	"""
+	Mendeteksi kelebihan jam kerja atau kehadiran di hari libur yang belum ada Overtime Planning-nya.
+	"""
+	unplanned_list = []
+	if not shift_type_name:
+		return unplanned_list
+
+	shift_type = frappe.get_doc("Shift Type", shift_type_name)
+	shift_end_time = shift_type.end_time
+	
+	# Get all checkins for the period
+	checkins = frappe.get_all("Employee Checkin", filters={
+		"employee": employee,
+		"time": ["between", [start_date, f"{end_date} 23:59:59"]]
+	}, fields=["time", "log_type"], order_by="time asc")
+
+	# Get all approved overtime for the period
+	approved_ot = frappe.db.sql(f"""
+		SELECT parent.overtime_date 
+		FROM `tabOvertime Planning Detail` detail
+		JOIN `tabOvertime Planning` parent ON detail.parent = parent.name
+		WHERE detail.employee = '{employee}' AND parent.docstatus = 1 
+		AND parent.overtime_date BETWEEN '{start_date}' AND '{end_date}'
+	""", as_dict=True)
+	approved_ot_dates = {getdate(d.overtime_date) for d in approved_ot}
+
+	# Process checkins by date
+	daily_logs = {}
+	for c in checkins:
+		d = getdate(c.time)
+		if d not in daily_logs:
+			daily_logs[d] = []
+		daily_logs[d].append(c)
+
+	for log_date, logs in daily_logs.items():
+		if log_date in approved_ot_dates:
+			continue
+		
+		is_hol = is_holiday(holiday_list, log_date)
+		
+		# Kasus Hari Libur: Ada fingerprint tapi tidak ada pengajuan OT
+		if is_hol:
+			unplanned_list.append({
+				"date": log_date,
+				"reason": "Masuk di Hari Libur tanpa pengajuan OT"
+			})
+			continue
+
+		# Kasus Hari Kerja: Cek kelebihan jam (Check-out > Shift End)
+		outs = [l.time for l in logs if l.log_type == "OUT"]
+		if outs:
+			last_out = max(outs)
+			out_time = last_out.time()
+			
+			# Convert shift_end_time (timedelta) to time object for comparison
+			shift_end_obj = (timedelta(0, 0) + shift_end_time)
+			last_out_delta = timedelta(hours=out_time.hour, minutes=out_time.minute, seconds=out_time.second)
+			
+			# Jika telat pulang lebih dari 1 jam (asumsi lembur minimal 1 jam)
+			diff_hours = (last_out_delta - shift_end_obj).total_seconds() / 3600
+			if diff_hours >= 1.0:
+				unplanned_list.append({
+					"date": log_date,
+					"reason": f"Kelebihan {round(diff_hours, 1)} jam kerja tanpa pengajuan OT"
+				})
+
+	return unplanned_list
+
 
 
 def _get_unmarked_and_absent_days(employee, start_date, end_date, holiday_list):
@@ -161,6 +233,19 @@ def calculate_payroll_components(doc, method):
 	# Hitung hari mangkir (termasuk unmarked attendance)
 	absent_days = _get_unmarked_and_absent_days(employee_id, start_date, end_date, holiday_list)
 	
+	# --- VALIDASI OVERTIME TAK TERENCANA ---
+	unplanned_ot = _get_unplanned_overtime(employee_id, start_date, end_date, shift_type, holiday_list)
+	if unplanned_ot:
+		ot_msg = _("Ditemukan kelebihan jam kerja/kehadiran hari libur yang {0}:").format(frappe.bold("TIDAK MEMILIKI pengajuan Overtime Planning"))
+		ot_list_html = "<ul>"
+		for item in unplanned_ot:
+			ot_list_html += f"<li><b>{item['date']}</b>: {item['reason']}</li>"
+		ot_list_html += "</ul>"
+		ot_msg += ot_list_html
+		ot_msg += _("<br>Gaji lembur untuk tanggal-tanggal di atas {0}. Mohon lengkapi pengajuan OT jika ingin dibayarkan.").format(frappe.bold("TIDAK AKAN DIHITUNG"))
+		
+		frappe.msgprint(ot_msg, title=_("Lembur Tak Terencana Terdeteksi"), indicator="orange")
+
 	if not shift_type:
 		msg = _("Karyawan {0} tidak dapat diproses karena tidak memiliki Shift Type aktif (Default maupun Assignment) untuk periode ini.").format(frappe.bold(doc.employee_name or employee_id))
 		msg += f"<br><br><b>Detail Ketidakhadiran:</b><br>- Perkiraan mangkir (tanpa fingerprint/cuti): {absent_days} hari."
