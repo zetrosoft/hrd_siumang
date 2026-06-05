@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "salary_component"
+  "salary_component",
+  "percentage"
  ],
  "fields": [
   {
@@ -15,6 +16,13 @@
    "in_list_view": 1,
    "label": "Salary Component",
    "options": "Salary Component",
+   "reqd": 1
+  },
+  {
+   "fieldname": "percentage",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Nilai %",
    "reqd": 1
   }
  ],

@@ -239,37 +239,38 @@ def calculate_payroll_components(doc, method):
 			deductions_map["Absensi"] = 0
 
 	# BPJS Components
-	bpjs_tk_list = [d.salary_component for d in bpjs_setting.komponen_bpjs_tk] if bpjs_setting else []
-	bpjs_kes_list = [d.salary_component for d in bpjs_setting.komponen_bpjs_kes] if bpjs_setting else []
+	bpjs_tk_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_tk} if bpjs_setting else {}
+	bpjs_kes_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_kes} if bpjs_setting else {}
 
 	if include_bpjs_tk:
-		tk_formulas = {
-			"JHT Perusahaan 3,7%": round(bpjs_base_tk * 0.037),
-			"JKK 0,89%": round(bpjs_base_tk * 0.0089),
-			"JKM 0,3%": round(bpjs_base_tk * 0.003),
-			"JP Perusahaan 2%": round(bpjs_base_tk * 0.02)
-		}
+		# Define components to calculate if they exist in the UI map
+		tk_to_calculate = [
+			"JHT Perusahaan 3,7%", "JKK 0,89%", "JKM 0,3%", "JP Perusahaan 2%",
+			"JHT Karyawan 2%", "JP Karyawan 1%"
+		]
 		
-		for comp_name, amount in tk_formulas.items():
-			if comp_name in bpjs_tk_list:
-				earnings_map[comp_name] = amount
-				deductions_map[comp_name] = amount
-		
-		if "JHT Karyawan 2%" in bpjs_tk_list:
-			deductions_map["JHT Karyawan 2%"] = round(bpjs_base_tk * 0.02)
-		if "JP Karyawan 1%" in bpjs_tk_list:
-			deductions_map["JP Karyawan 1%"] = round(bpjs_base_tk * 0.01)
+		for comp_name in tk_to_calculate:
+			if comp_name in bpjs_tk_map:
+				percentage = bpjs_tk_map[comp_name]
+				amount = round(bpjs_base_tk * (percentage / 100))
+				
+				if "Perusahaan" in comp_name or comp_name in ["JKK 0,89%", "JKM 0,3%"]:
+					earnings_map[comp_name] = amount
+					deductions_map[comp_name] = amount
+				else:
+					deductions_map[comp_name] = amount
 
 	if include_bpjs_kes:
-		jkn_perusahaan = round(bpjs_base_kes * 0.04)
-		jkn_karyawan = round(bpjs_base_kes * 0.01)
-		
-		if "JKN Perusahaan 4%" in bpjs_kes_list:
-			earnings_map["JKN Perusahaan 4%"] = jkn_perusahaan
-			deductions_map["JKN Perusahaan 4%"] = jkn_perusahaan
-		
-		if "JKN Karyawan 1%" in bpjs_kes_list:
-			deductions_map["JKN Karyawan 1%"] = jkn_karyawan
+		if "JKN Perusahaan 4%" in bpjs_kes_map:
+			pct = bpjs_kes_map["JKN Perusahaan 4%"]
+			amt = round(bpjs_base_kes * (pct / 100))
+			earnings_map["JKN Perusahaan 4%"] = amt
+			deductions_map["JKN Perusahaan 4%"] = amt
+			
+		if "JKN Karyawan 1%" in bpjs_kes_map:
+			pct = bpjs_kes_map["JKN Karyawan 1%"]
+			amt = round(bpjs_base_kes * (pct / 100))
+			deductions_map["JKN Karyawan 1%"] = amt
 
 	earnings_map["Overtime"] = calculate_overtime(doc)
 
