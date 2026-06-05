@@ -88,9 +88,13 @@ class BPJSSetting(Document):
 						row.salary_component = new_name
 						frappe.msgprint(f"Renamed {old_name} to {new_name}")
 
+	@frappe.whitelist()
+	def load_defaults(self):
+		self.set_default_components()
+		self.save()
+		return True
+
 @frappe.whitelist()
 def load_defaults():
 	doc = frappe.get_doc("BPJS Setting", "BPJS Setting")
-	doc.set_default_components()
-	doc.save()
-	return True
+	return doc.load_defaults()
