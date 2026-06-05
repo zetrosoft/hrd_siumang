@@ -20,12 +20,23 @@ def dry_run():
     doc.end_date = end_date
     doc.docstatus = 0 # Draft mode for calculation
 
+    # Simulation: Clear shift to test hard-block
+    # frappe.db.set_value("Employee", employee, "default_shift", None)
+    # frappe.db.sql(f"update `tabShift Assignment` set status = 'Inactive' where employee = '{employee}'")
+    
     # BPJS Setting (Trigger auto-fill if empty for simulation)
     bpjs_setting = frappe.get_doc("BPJS Setting", "BPJS Setting")
     bpjs_setting.validate()
     
-    # Run calculation
-    calculate_payroll_components(doc, "before_save")
+    try:
+        # Run calculation
+        calculate_payroll_components(doc, "before_save")
+    except frappe.ValidationError as e:
+        print(f"\n[EXPECTED ERROR CATCHED]\n{e}")
+        return
+    except Exception as e:
+        print(f"\n[ERROR]\n{e}")
+        return
 
     # Result Summary
     print(f"Employee Name: {doc.employee_name}")

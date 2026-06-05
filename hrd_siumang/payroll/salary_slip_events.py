@@ -1,9 +1,63 @@
 import frappe
 from frappe import _
 from frappe.query_builder import Order
-from frappe.utils import getdate
+from frappe.utils import getdate, add_days, date_diff
+from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
 
 from hrd_siumang.payroll.payroll_utils import calculate_overtime, calculate_pph21, get_payroll_denominator
+
+
+def _get_unmarked_and_absent_days(employee, start_date, end_date, holiday_list):
+	"""
+	Menghitung hari mangkir (unmarked) atau absen eksplisit pada hari kerja.
+	Hari yang tidak ada fingerprint dan tidak ada cuti dihitung sebagai potongan.
+	"""
+	total_unpaid = 0
+	curr_date = getdate(start_date)
+	end_date_obj = getdate(end_date)
+	
+	# Cache attendance for the period
+	attendance_records = frappe.get_all("Attendance", filters={
+		"employee": employee,
+		"attendance_date": ["between", [start_date, end_date]],
+		"docstatus": 1
+	}, fields=["attendance_date", "status"])
+	attendance_map = {getdate(d.attendance_date): d.status for d in attendance_records}
+	
+	# Cache approved leaves
+	leave_applications = frappe.get_all("Leave Application", filters={
+		"employee": employee,
+		"status": "Approved",
+		"docstatus": 1,
+		"from_date": ["<=", end_date],
+		"to_date": [">=", start_date]
+	}, fields=["from_date", "to_date"])
+	
+	approved_leave_dates = set()
+	for leave in leave_applications:
+		d = getdate(max(getdate(leave.from_date), getdate(start_date)))
+		limit = getdate(min(getdate(leave.to_date), getdate(end_date)))
+		while d <= limit:
+			approved_leave_dates.add(d)
+			d = getdate(add_days(d, 1))
+
+	# Iterate every day
+	while curr_date <= end_date_obj:
+		# Jika bukan hari libur
+		if not is_holiday(holiday_list, curr_date):
+			status = attendance_map.get(curr_date)
+			
+			# Jika tidak ada record attendance DAN tidak ada cuti disetujui -> Unmarked (Mangkir)
+			if not status and curr_date not in approved_leave_dates:
+				total_unpaid += 1
+			# Jika statusnya eksplisit Absent
+			elif status == "Absent":
+				total_unpaid += 1
+				
+		curr_date = getdate(add_days(curr_date, 1))
+		
+	return total_unpaid
+
 
 
 def _calculate_borongan_for_employee(employee, start_date, end_date):
@@ -93,6 +147,25 @@ def calculate_payroll_components(doc, method):
 	# Determine Denominator (21 or 25)
 	denominator = get_payroll_denominator(employee_id)
 	
+	# --- VALIDASI SHIFT TYPE & HOLIDAY LIST ---
+	shift_type = frappe.get_value("Shift Assignment", 
+		{"employee": employee_id, "docstatus": 1, "status": "Active", "start_date": ("<=", end_date)}, 
+		"shift_type")
+	if not shift_type:
+		shift_type = frappe.db.get_value("Employee", employee_id, "default_shift")
+	
+	holiday_list = frappe.get_value("Shift Type", shift_type, "holiday_list") if shift_type else None
+	if not holiday_list:
+		holiday_list = frappe.db.get_value("Employee", employee_id, "holiday_list")
+	
+	# Hitung hari mangkir (termasuk unmarked attendance)
+	absent_days = _get_unmarked_and_absent_days(employee_id, start_date, end_date, holiday_list)
+	
+	if not shift_type:
+		msg = _("Karyawan {0} tidak dapat diproses karena tidak memiliki Shift Type aktif (Default maupun Assignment) untuk periode ini.").format(frappe.bold(doc.employee_name or employee_id))
+		msg += f"<br><br><b>Detail Ketidakhadiran:</b><br>- Perkiraan mangkir (tanpa fingerprint/cuti): {absent_days} hari."
+		frappe.throw(msg, title=_("Shift Type Belum Diatur"))
+
 	# BPJS Base Calculation
 	# Fetch base from Salary Structure Assignment
 	assignment = frappe.db.get_value(
@@ -159,13 +232,6 @@ def calculate_payroll_components(doc, method):
 		if annual_leave_balance <= 0:
 			cb_unpaid_days += cb.total_leave_days
 
-	# Absent days
-	absent_days = frappe.db.count("Attendance", {
-		"employee": employee_id,
-		"status": "Absent",
-		"attendance_date": ["between", (start_date, end_date)],
-	})
-	
 	unpaid_days = st_days + cb_unpaid_days + absent_days
 
 	# --- 2. Calculation Logic for Different Structures ---
