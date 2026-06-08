@@ -387,8 +387,13 @@ def calculate_payroll_components(doc, method):
 		earnings_map["Gaji Pokok"] = base_amount
 		if ea_doc:
 			# Hitung faktor kehadiran untuk pemotongan proporsional tunjangan tidak tetap
-			payment_days = max(denominator - unpaid_days, 0)
-			attendance_factor = payment_days / denominator if denominator > 0 else 1
+			# Gunakan doc.payment_days dari HRMS standar agar akurat 100% dengan UI
+			# Jika payment_days = 0 (karyawan absen sebulan penuh), maka faktornya 0
+			payment_days_hrms = getattr(doc, "payment_days", 0)
+			
+			# Pastikan payment_days tidak melebihi denominator (batas maksimal 1.0)
+			payment_days_hrms = min(payment_days_hrms, denominator)
+			attendance_factor = payment_days_hrms / denominator if denominator > 0 else 1
 
 			tunjangan_list = [
 				("Tj. Jabatan", ea_doc.tunjangan_jabatan, ea_doc.is_tunjangan_jabatan_fixed),
@@ -408,8 +413,10 @@ def calculate_payroll_components(doc, method):
 					earnings_map[nama_komponen] = round(nominal * attendance_factor)
 		
 		# Apply Absent Deduction (The 21/25 logic)
-		if unpaid_days > 0:
-			deductions_map["Absensi"] = round((bpjs_base / denominator) * unpaid_days)
+		# Selaraskan juga perhitungan deduction dengan doc.absent_days + LWP dari UI
+		total_absen_ui = getattr(doc, "absent_days", 0) + getattr(doc, "leave_without_pay", 0)
+		if total_absen_ui > 0:
+			deductions_map["Absensi"] = round((bpjs_base / denominator) * total_absen_ui)
 		else:
 			deductions_map["Absensi"] = 0
 
@@ -491,3 +498,21 @@ def calculate_payroll_components(doc, method):
 	doc.gross_pay = sum(e.get("amount", 0) for e in new_earnings)
 	doc.total_deduction = sum(d.get("amount", 0) for d in new_deductions)
 	doc.net_pay = doc.gross_pay - doc.total_deduction
+
+	# Prevent negative Net Pay by capping total deductions to gross pay
+	if doc.net_pay < 0:
+		doc.net_pay = 0
+		# We must balance the equation: Gross - Deduction = Net (0)
+		# So, Total Deduction must be exactly equal to Gross Pay
+		adjustment_needed = doc.total_deduction - doc.gross_pay
+		doc.total_deduction = doc.gross_pay
+		
+		# Adjust the "Absensi" row to absorb the difference so the breakdown remains logical
+		for d in new_deductions:
+			if d.get("salary_component") == "Absensi":
+				d["amount"] -= adjustment_needed
+				if d["amount"] < 0:
+					d["amount"] = 0
+				break
+		doc.set("deductions", new_deductions)
+

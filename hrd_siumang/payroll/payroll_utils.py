@@ -77,7 +77,7 @@ def get_payroll_denominator(employee):
     try:
         # 1. Cek Manual Override
         manual_val = frappe.db.get_value("Employee Allowance Data", 
-            {"employee": employee, "docstatus": 1}, "manual_payroll_denominator")
+            {"employee": employee}, "manual_payroll_denominator")
         
         if manual_val and manual_val > 0:
             return manual_val
