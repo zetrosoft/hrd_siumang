@@ -386,13 +386,26 @@ def calculate_payroll_components(doc, method):
 		# Monthly Calculation
 		earnings_map["Gaji Pokok"] = base_amount
 		if ea_doc:
-			earnings_map.update({
-				"Tj. Jabatan": ea_doc.tunjangan_jabatan or 0,
-				"Tj. Komunikasi": ea_doc.tunjangan_komunikasi or 0,
-				"Tj. Transport": ea_doc.tunjangan_transport or 0,
-				"Tj. Makan": ea_doc.tunjangan_makan or 0,
-				"Tj. Lain": ea_doc.tunjangan_lain or 0,
-			})
+			# Hitung faktor kehadiran untuk pemotongan proporsional tunjangan tidak tetap
+			payment_days = max(denominator - unpaid_days, 0)
+			attendance_factor = payment_days / denominator if denominator > 0 else 1
+
+			tunjangan_list = [
+				("Tj. Jabatan", ea_doc.tunjangan_jabatan, ea_doc.is_tunjangan_jabatan_fixed),
+				("Tj. Komunikasi", ea_doc.tunjangan_komunikasi, ea_doc.is_tunjangan_komunikasi_fixed),
+				("Tj. Transport", ea_doc.tunjangan_transport, getattr(ea_doc, "is_tunjangan_transport_fixed", False)),
+				("Tj. Makan", ea_doc.tunjangan_makan, getattr(ea_doc, "is_tunjangan_makan_fixed", False)),
+				("Tj. Lain", ea_doc.tunjangan_lain, getattr(ea_doc, "is_tunjangan_lain_fixed", False)),
+			]
+
+			for nama_komponen, nominal, is_fixed in tunjangan_list:
+				nominal = nominal or 0
+				if is_fixed:
+					# Tunjangan Tetap masuk 100% (potongan dilakukan via komponen Absensi di Deductions)
+					earnings_map[nama_komponen] = nominal
+				else:
+					# Tunjangan Tidak Tetap (Variabel) dipotong secara proporsional sesuai hari hadir
+					earnings_map[nama_komponen] = round(nominal * attendance_factor)
 		
 		# Apply Absent Deduction (The 21/25 logic)
 		if unpaid_days > 0:
