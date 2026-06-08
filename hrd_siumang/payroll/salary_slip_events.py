@@ -274,7 +274,18 @@ def calculate_payroll_components(doc, method):
 	tunjangan_tetap = 0
 	if frappe.db.exists("Employee Allowance Data", {"employee": employee_id}):
 		ea_doc = frappe.get_doc("Employee Allowance Data", {"employee": employee_id})
-		tunjangan_tetap = (ea_doc.tunjangan_jabatan or 0) + (ea_doc.tunjangan_komunikasi or 0)
+		
+		# Dinamis: Cek checkbox Is Fixed untuk setiap komponen
+		if ea_doc.is_tunjangan_jabatan_fixed:
+			tunjangan_tetap += (ea_doc.tunjangan_jabatan or 0)
+		if ea_doc.is_tunjangan_komunikasi_fixed:
+			tunjangan_tetap += (ea_doc.tunjangan_komunikasi or 0)
+		if getattr(ea_doc, "is_tunjangan_transport_fixed", False):
+			tunjangan_tetap += (ea_doc.tunjangan_transport or 0)
+		if getattr(ea_doc, "is_tunjangan_makan_fixed", False):
+			tunjangan_tetap += (ea_doc.tunjangan_makan or 0)
+		if getattr(ea_doc, "is_tunjangan_lain_fixed", False):
+			tunjangan_tetap += (ea_doc.tunjangan_lain or 0)
 	
 	bpjs_base = base_amount + tunjangan_tetap
 

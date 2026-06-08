@@ -1,16 +1,25 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:employee",
  "creation": "2025-11-26 09:25:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "employee",
   "tunjangan_jabatan",
+  "is_tunjangan_jabatan_fixed",
   "tunjangan_komunikasi",
+  "is_tunjangan_komunikasi_fixed",
   "tunjangan_transport",
+  "is_tunjangan_transport_fixed",
   "tunjangan_makan",
+  "is_tunjangan_makan_fixed",
   "tunjangan_lain",
+  "is_tunjangan_lain_fixed",
+  "note_fixed_allowance",
+  "column_break_right",
+  "manual_payroll_denominator",
   "amended_from"
  ],
  "fields": [
@@ -24,29 +33,83 @@
    "unique": 1
   },
   {
+   "columns": 8,
    "fieldname": "tunjangan_jabatan",
    "fieldtype": "Currency",
    "label": "Tunjangan Jabatan"
   },
   {
+   "columns": 4,
+   "default": "1",
+   "fieldname": "is_tunjangan_jabatan_fixed",
+   "fieldtype": "Check",
+   "label": "Is Tunjangan Tetap"
+  },
+  {
+   "columns": 8,
    "fieldname": "tunjangan_komunikasi",
    "fieldtype": "Currency",
    "label": "Tunjangan Komunikasi"
   },
   {
+   "columns": 4,
+   "default": "1",
+   "fieldname": "is_tunjangan_komunikasi_fixed",
+   "fieldtype": "Check",
+   "label": "Is Tunjangan Tetap"
+  },
+  {
+   "columns": 8,
    "fieldname": "tunjangan_transport",
    "fieldtype": "Currency",
    "label": "Tunjangan Transport"
   },
   {
+   "columns": 4,
+   "default": "0",
+   "fieldname": "is_tunjangan_transport_fixed",
+   "fieldtype": "Check",
+   "label": "Is Tunjangan Tetap"
+  },
+  {
+   "columns": 8,
    "fieldname": "tunjangan_makan",
    "fieldtype": "Currency",
    "label": "Tunjangan Makan"
   },
   {
+   "columns": 4,
+   "default": "0",
+   "fieldname": "is_tunjangan_makan_fixed",
+   "fieldtype": "Check",
+   "label": "Is Tunjangan Tetap"
+  },
+  {
+   "columns": 8,
    "fieldname": "tunjangan_lain",
    "fieldtype": "Currency",
    "label": "Tunjangan Lain"
+  },
+  {
+   "columns": 4,
+   "default": "0",
+   "fieldname": "is_tunjangan_lain_fixed",
+   "fieldtype": "Check",
+   "label": "Is Tunjangan Tetap"
+  },
+  {
+   "fieldname": "note_fixed_allowance",
+   "fieldtype": "HTML",
+   "options": "<div style='padding: 10px; background-color: #f8f9fa; border-left: 5px solid #007bff; margin-top: 20px;'><strong>Note:</strong> Jika <em>Is Tunjangan Tetap</em> dicentang, maka nilai tunjangan tersebut akan menjadi penambah dasar penghitung BPJS.</div>"
+  },
+  {
+   "fieldname": "column_break_right",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "manual_payroll_denominator",
+   "fieldtype": "Int",
+   "label": "Pembagi Hari Kerja"
   },
   {
    "fieldname": "amended_from",
@@ -62,12 +125,37 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-26 08:10:03.555452",
+ "modified": "2026-06-08 16:00:00",
  "modified_by": "Administrator",
  "module": "hrd_siumang",
  "name": "Employee Allowance Data",
  "owner": "Administrator",
- "permissions": [],
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",

@@ -4,15 +4,85 @@ from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
 from frappe import _
 
 @frappe.whitelist()
-def get_payroll_denominator(employee):
+def get_payroll_denominator_info(employee):
     """
-    Menentukan pembagi (denominator) gaji berdasarkan Shift Assignment.
-    5 hari kerja = 21
-    6 hari kerja = 25
-    Default = 25
+    Mengembalikan informasi denominator sistem, status shift, 
+    nama shift, dan holiday list karyawan.
+    Digunakan untuk auto-fill dan transparansi di UI.
     """
     try:
-        # 1. Cari Shift Assignment aktif
+        # Cari Shift Assignment aktif
+        shift_assignment = frappe.get_value("Shift Assignment", 
+            {"employee": employee, "docstatus": 1, "status": "Active"}, 
+            "shift_type")
+        
+        source = "Shift Assignment"
+        if not shift_assignment:
+            shift_assignment = frappe.get_value("Employee", employee, "default_shift")
+            source = "Default Shift"
+            
+        if not shift_assignment:
+            return {"has_shift": False, "denominator": 25, "shift": None, "holiday_list": None}
+            
+        holiday_list = frappe.get_value("Shift Type", shift_assignment, "holiday_list")
+        if not holiday_list:
+            holiday_list = frappe.get_value("Employee", employee, "holiday_list")
+            
+        if not holiday_list:
+            return {
+                "has_shift": True, 
+                "denominator": 25, 
+                "shift": shift_assignment, 
+                "holiday_list": "Tidak Ditemukan",
+                "source": source
+            }
+            
+        holidays = frappe.get_all("Holiday", 
+            filters={"parent": holiday_list, "weekly_off": 1}, 
+            fields=["holiday_date"], 
+            limit=14)
+            
+        if not holidays:
+            return {
+                "has_shift": True, 
+                "denominator": 25, 
+                "shift": shift_assignment, 
+                "holiday_list": holiday_list,
+                "source": source
+            }
+            
+        unique_days = set()
+        for h in holidays:
+            unique_days.add(h.holiday_date.weekday())
+            
+        denominator = 21 if len(unique_days) >= 2 else 25
+        return {
+            "has_shift": True, 
+            "denominator": denominator, 
+            "shift": shift_assignment, 
+            "holiday_list": holiday_list,
+            "source": source
+        }
+            
+    except Exception:
+        return {"has_shift": False, "denominator": 25}
+
+@frappe.whitelist()
+def get_payroll_denominator(employee):
+    """
+    Menentukan pembagi (denominator) gaji.
+    1. Cek Manual Override di Employee Allowance Data
+    2. Jika tidak ada, hitung otomatis berdasarkan Shift/Holiday List
+    """
+    try:
+        # 1. Cek Manual Override
+        manual_val = frappe.db.get_value("Employee Allowance Data", 
+            {"employee": employee, "docstatus": 1}, "manual_payroll_denominator")
+        
+        if manual_val and manual_val > 0:
+            return manual_val
+
+        # 2. Cari Shift Assignment aktif
         shift_assignment = frappe.get_value("Shift Assignment", 
             {"employee": employee, "docstatus": 1, "status": "Active"}, 
             "shift_type")
@@ -38,7 +108,7 @@ def get_payroll_denominator(employee):
         # Frappe menyimpan weekly off di tabel child Holiday
         weekly_offs = frappe.db.count("Holiday", {
             "parent": holiday_list,
-            "is_weekly_off": 1
+            "weekly_off": 1
         })
         
         # Logika: 
@@ -47,7 +117,7 @@ def get_payroll_denominator(employee):
         # Catatan: Kita gunakan perbandingan mingguan saja agar lebih akurat
         
         holidays = frappe.get_all("Holiday", 
-            filters={"parent": holiday_list, "is_weekly_off": 1}, 
+            filters={"parent": holiday_list, "weekly_off": 1}, 
             fields=["holiday_date"], 
             limit=14) # Ambil 2 minggu sampel
             
