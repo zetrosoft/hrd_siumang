@@ -432,12 +432,32 @@ def calculate_payroll_components(doc, method):
 		# else:
 		# 	deductions_map["Absensi"] = 0
 
-		# Logika Baru:
-		base_potongan_absensi = base_amount + (total_seluruh_tunjangan if ea_doc else 0)
-		if total_absen_ui > 0:
-			deductions_map["Absensi"] = round((base_potongan_absensi / denominator) * total_absen_ui)
+		# Logika Baru (Absensi Kumulatif): DIMATIKAN SEMENTARA SESUAI PERMINTAAN
+		# base_potongan_absensi = base_amount + (total_seluruh_tunjangan if ea_doc else 0)
+		# if total_absen_ui > 0:
+		# 	deductions_map["Absensi"] = round((base_potongan_absensi / denominator) * total_absen_ui)
+		# else:
+		# 	deductions_map["Absensi"] = 0
+
+	# --- INTEGRASI DEDUCTION SALARY (KUSTOM) ---
+	# Ambil data dari DocType Deduction Salary (One-off & Recurring)
+	deduction_salaries = frappe.db.sql("""
+		SELECT salary_component, amount, overwrite_salary_structure_amount
+		FROM `tabDeduction Salary`
+		WHERE employee = %s AND docstatus = 1 
+		AND (
+			(is_recurring = 0 AND payroll_date BETWEEN %s AND %s)
+			OR
+			(is_recurring = 1 AND from_date <= %s AND (to_date IS NULL OR to_date >= %s))
+		)
+	""", (employee_id, start_date, end_date, end_date, start_date), as_dict=True)
+
+	# Pastikan nilai ini masuk ke deductions_map agar direbuild ulang oleh Siumang logic di bawahnya
+	for ds in deduction_salaries:
+		if ds.overwrite_salary_structure_amount or ds.salary_component not in deductions_map:
+			deductions_map[ds.salary_component] = ds.amount
 		else:
-			deductions_map["Absensi"] = 0
+			deductions_map[ds.salary_component] += ds.amount
 
 	# BPJS Components
 	bpjs_tk_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_tk} if bpjs_setting else {}

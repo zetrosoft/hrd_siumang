@@ -115,7 +115,7 @@
   {
    "fieldname": "note_fixed_allowance",
    "fieldtype": "HTML",
-   "options": "<div style='padding: 10px; background-color: #f8f9fa; border-left: 5px solid #007bff; margin-top: 20px;'><strong>Note:</strong> Jika <em>Is Tunjangan Tetap</em> dicentang, maka nilai tunjangan tersebut akan menjadi penambah dasar penghitung BPJS.</div>"
+   "options": "<div style=\"padding: 10px; background-color: #f8f9fa; border-left: 5px solid #007bff; margin-top: 20px;\"><strong>Note:</strong> Jika <em>Is Tunjangan Tetap</em> dicentang, maka nilai tunjangan tersebut akan menjadi penambah dasar penghitung BPJS.</div>"
   },
   {
    "fieldname": "column_break_right",
@@ -124,6 +124,7 @@
   {
    "fieldname": "manual_payroll_denominator",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Pembagi Hari Kerja"
   },
   {
@@ -138,9 +139,8 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "is_submittable": 0,
  "links": [],
- "modified": "2026-06-08 16:00:00",
+ "modified": "2026-06-09 23:38:54.950405",
  "modified_by": "Administrator",
  "module": "hrd_siumang",
  "name": "Employee Allowance Data",
