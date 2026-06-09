@@ -403,20 +403,39 @@ def calculate_payroll_components(doc, method):
 				("Tj. Lain", ea_doc.tunjangan_lain, getattr(ea_doc, "is_tunjangan_lain_fixed", False)),
 			]
 
+			# MODIFIKASI SIUMANG: Semua tunjangan dibayar 100%, potongan dikumpulkan di komponen Absensi
+			# Logika Lama (Dinonaktifkan):
+			# for nama_komponen, nominal, is_fixed in tunjangan_list:
+			# 	nominal = nominal or 0
+			# 	if is_fixed:
+			# 		# Tunjangan Tetap masuk 100% (potongan dilakukan via komponen Absensi di Deductions)
+			# 		earnings_map[nama_komponen] = nominal
+			# 	else:
+			# 		# Tunjangan Tidak Tetap (Variabel) dipotong secara proporsional sesuai hari hadir
+			# 		earnings_map[nama_komponen] = round(nominal * attendance_factor)
+			
+			# Logika Baru:
+			total_seluruh_tunjangan = 0
 			for nama_komponen, nominal, is_fixed in tunjangan_list:
 				nominal = nominal or 0
-				if is_fixed:
-					# Tunjangan Tetap masuk 100% (potongan dilakukan via komponen Absensi di Deductions)
-					earnings_map[nama_komponen] = nominal
-				else:
-					# Tunjangan Tidak Tetap (Variabel) dipotong secara proporsional sesuai hari hadir
-					earnings_map[nama_komponen] = round(nominal * attendance_factor)
+				earnings_map[nama_komponen] = nominal
+				total_seluruh_tunjangan += nominal
 		
 		# Apply Absent Deduction (The 21/25 logic)
 		# Selaraskan juga perhitungan deduction dengan doc.absent_days + LWP dari UI
 		total_absen_ui = getattr(doc, "absent_days", 0) + getattr(doc, "leave_without_pay", 0)
+		
+		# MODIFIKASI SIUMANG: Dasar potongan = Gaji Pokok + Semua Tunjangan
+		# Logika Lama (Dinonaktifkan):
+		# if total_absen_ui > 0:
+		# 	deductions_map["Absensi"] = round((bpjs_base / denominator) * total_absen_ui)
+		# else:
+		# 	deductions_map["Absensi"] = 0
+
+		# Logika Baru:
+		base_potongan_absensi = base_amount + (total_seluruh_tunjangan if ea_doc else 0)
 		if total_absen_ui > 0:
-			deductions_map["Absensi"] = round((bpjs_base / denominator) * total_absen_ui)
+			deductions_map["Absensi"] = round((base_potongan_absensi / denominator) * total_absen_ui)
 		else:
 			deductions_map["Absensi"] = 0
 
