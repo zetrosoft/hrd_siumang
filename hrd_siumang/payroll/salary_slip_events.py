@@ -441,24 +441,30 @@ def calculate_payroll_components(doc, method):
 
 	# --- INTEGRASI DEDUCTION SALARY (KUSTOM) ---
 	# Ambil data dari DocType Deduction Salary (One-off & Recurring)
+	# Mendukung Earning maupun Deduction sesuai tipe Salary Component
 	deduction_salaries = frappe.db.sql("""
-		SELECT salary_component, amount, overwrite_salary_structure_amount
-		FROM `tabDeduction Salary`
-		WHERE employee = %s AND docstatus = 1 
+		SELECT ds.salary_component, ds.amount, ds.overwrite_salary_structure_amount, sc.type
+		FROM `tabDeduction Salary` ds
+		JOIN `tabSalary Component` sc ON ds.salary_component = sc.name
+		WHERE ds.employee = %s AND ds.docstatus = 1 
 		AND (
-			(is_recurring = 0 AND payroll_date BETWEEN %s AND %s)
+			(ds.is_recurring = 0 AND ds.payroll_date BETWEEN %s AND %s)
 			OR
-			(is_recurring = 1 AND from_date <= %s AND (to_date IS NULL OR to_date >= %s))
+			(ds.is_recurring = 1 AND ds.from_date <= %s AND (ds.to_date IS NULL OR ds.to_date >= %s))
 		)
 	""", (employee_id, start_date, end_date, end_date, start_date), as_dict=True)
 
-	# Pastikan nilai ini masuk ke deductions_map agar direbuild ulang oleh Siumang logic di bawahnya
 	for ds in deduction_salaries:
-		if ds.overwrite_salary_structure_amount or ds.salary_component not in deductions_map:
-			deductions_map[ds.salary_component] = ds.amount
+		target_map = earnings_map if ds.type == "Earning" else deductions_map
+		if ds.overwrite_salary_structure_amount or ds.salary_component not in target_map:
+			target_map[ds.salary_component] = ds.amount
 		else:
-			deductions_map[ds.salary_component] += ds.amount
+			target_map[ds.salary_component] += ds.amount
 
+	# --- BPJS AUTOMATIC CALCULATION (DISABLED) ---
+	# Perhitungan BPJS kini dilakukan secara manual melalui DocType Deduction Salary
+	# agar HRD memiliki kendali penuh terhadap nilai iuran tanpa bergantung pada rumus sistem.
+	"""
 	# BPJS Components
 	bpjs_tk_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_tk} if bpjs_setting else {}
 	bpjs_kes_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_kes} if bpjs_setting else {}
@@ -503,6 +509,7 @@ def calculate_payroll_components(doc, method):
 			pct = bpjs_kes_map[jkn_k_name]
 			amt = round(bpjs_base_kes * (pct / 100))
 			deductions_map[jkn_k_name] = amt
+	"""
 
 	earnings_map["Overtime"] = calculate_overtime(doc)
 

@@ -1,0 +1,15 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Interview",
+  "fieldname": "custom_applicant_name",
+  "fieldtype": "Data",
+  "fetch_from": "job_applicant.applicant_name",
+  "insert_after": "job_applicant",
+  "label": "Applicant Name",
+  "in_list_view": 1,
+  "module": "hrd_siumang",
+  "name": "Interview-custom_applicant_name"
+ }
+]

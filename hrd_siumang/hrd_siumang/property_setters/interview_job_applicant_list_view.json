@@ -1,0 +1,11 @@
+{
+ "docstatus": 0,
+ "doctype_or_field": "DocField",
+ "doc_type": "Interview",
+ "field_name": "job_applicant",
+ "module": "hrd_siumang",
+ "name": "Interview-job_applicant-in_list_view",
+ "property": "in_list_view",
+ "property_type": "Check",
+ "value": "0"
+}

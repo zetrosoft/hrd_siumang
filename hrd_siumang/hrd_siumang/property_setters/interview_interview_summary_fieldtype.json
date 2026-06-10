@@ -1,0 +1,11 @@
+{
+ "docstatus": 0,
+ "doctype_or_field": "DocField",
+ "doc_type": "Interview",
+ "field_name": "interview_summary",
+ "module": "hrd_siumang",
+ "name": "Interview-interview_summary-fieldtype",
+ "property": "fieldtype",
+ "property_type": "Select",
+ "value": "Text Editor"
+}
