@@ -36,3 +36,7 @@ doc_events = {
 		"before_save": "hrd_siumang.overrides.salary_structure_assignment.set_base_from_ctc"
 	}
 }
+
+after_migrate = [
+	"hrd_siumang.utils.ux_fixes.force_recruitment_ux_improvements"
+]
