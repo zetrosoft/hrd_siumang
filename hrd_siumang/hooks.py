@@ -16,8 +16,8 @@ override_doctype_class = {
 }
 
 app_include_js = [
-	"/assets/hrd_siumang/js/employee_exits_custom.js",
-	"/assets/hrd_siumang/js/hrms_overrides.js",
+	"/assets/hrd_siumang/js/employee_exits_custom.bundle.js",
+	"/assets/hrd_siumang/js/hrms_overrides.bundle.js",
 ]
 
 doctype_js = {

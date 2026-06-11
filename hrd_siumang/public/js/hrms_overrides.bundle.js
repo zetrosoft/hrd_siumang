@@ -1,8 +1,7 @@
 frappe.templates['feedback_history'] = `<div class="feedback-history mb-3">
-	{% if (feedback_history.length) { %}
+	{% if (feedback_history && feedback_history.length) { %}
 		{% for (let i=0, l=feedback_history.length; i<l; i++) { %}
 			<div class="feedback-content p-3 d-flex flex-row mt-3" data-name="{{ feedback_history[i].name }}">
-				<!-- Reviewer Info -->
 				<div class="reviewer-info mb-2 col-xs-3">
 					<div class="row">
 						<div class="col-xs-2">
@@ -23,7 +22,6 @@ frappe.templates['feedback_history'] = `<div class="feedback-history mb-3">
 					</div>
 				</div>
 
-				<!-- Feedback -->
 				<div class="reviewer-feedback col-xs-6">
 					<div class="rating">
 						{%= frappe.render_template("rating",
@@ -36,7 +34,6 @@ frappe.templates['feedback_history'] = `<div class="feedback-history mb-3">
 					</div>
 				</div>
 
-				<!-- Feedback Date & Link -->
 				<div class="feedback-info col-xs-3 d-flex flex-row justify-content-end align-items-baseline">
 					<div class="time small text-muted mr-2">
 						{{ frappe.datetime.comment_when(feedback_history[i].added_on) }}
