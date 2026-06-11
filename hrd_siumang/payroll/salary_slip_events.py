@@ -461,11 +461,9 @@ def calculate_payroll_components(doc, method):
 		else:
 			target_map[ds.salary_component] += ds.amount
 
-	# --- BPJS AUTOMATIC CALCULATION (DISABLED) ---
-	# Perhitungan BPJS kini dilakukan secara manual melalui DocType Deduction Salary
-	# agar HRD memiliki kendali penuh terhadap nilai iuran tanpa bergantung pada rumus sistem.
-	"""
-	# BPJS Components
+	# --- BPJS AUTOMATIC CALCULATION ---
+	# Perhitungan BPJS diaktifkan kembali secara otomatis berdasarkan setting BPJS Setting.
+	# HRD tetap bisa melakukan pengecualian per individu melalui menu BPJS Setting.
 	bpjs_tk_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_tk} if bpjs_setting else {}
 	bpjs_kes_map = {d.salary_component: d.percentage for d in bpjs_setting.komponen_bpjs_kes} if bpjs_setting else {}
 
@@ -509,7 +507,6 @@ def calculate_payroll_components(doc, method):
 			pct = bpjs_kes_map[jkn_k_name]
 			amt = round(bpjs_base_kes * (pct / 100))
 			deductions_map[jkn_k_name] = amt
-	"""
 
 	earnings_map["Overtime"] = calculate_overtime(doc)
 
@@ -529,7 +526,16 @@ def calculate_payroll_components(doc, method):
 	
 	# PPh 21 Calculation
 	doc.gross_pay = sum(earnings_map.values())
-	deductions_map["Tax"] = calculate_pph21(doc)
+	
+	# Cek setting apakah hitung otomatis atau manual
+	brand_settings = frappe.get_single("Custom Brand Settings")
+	if brand_settings.calculate_tax_automatically:
+		deductions_map["Tax"] = calculate_pph21(doc)
+	else:
+		# Jika manual, pastikan komponen "Tax" tetap ada di map agar tidak di-overwrite nol oleh loop di bawah
+		# Nilainya sudah diambil dari Deduction Salary di bagian integrasi sebelumnya (jika ada)
+		if "Tax" not in deductions_map:
+			deductions_map["Tax"] = 0
 
 	for comp_row in salary_structure_doc.earnings:
 		amount = earnings_map.get(comp_row.salary_component, 0)
